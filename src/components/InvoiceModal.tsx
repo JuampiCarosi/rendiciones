@@ -1,4 +1,4 @@
-import Input from "./Input";
+import Input, { SelectInput } from "./Input";
 import Select from "react-select";
 import { useForm } from "react-hook-form";
 import { useState } from "react";
@@ -24,14 +24,20 @@ const costCenterTypes = [
   { value: "picc", label: "PICC" },
 ];
 
-const InvoiceModal = () => {
-  const { register, handleSubmit } = useForm();
+type Props = {
+  handleClose: () => void;
+  handleSubmit: (data: any) => void;
+  show: boolean;
+};
+
+const InvoiceModal = ({ handleClose, show, handleSubmit }: Props) => {
+  const { register, handleSubmit: handleSubmitVal } = useForm();
   const [invoiceType, setInvoiceType] = useState("");
   const [expenseType, setExpenseType] = useState("");
   const [costCenter, setCostCenter] = useState("");
   const [inputError, setInputError] = useState("");
 
-  const onSubmit = handleSubmit((data) => {
+  const onSubmit = handleSubmitVal((data) => {
     const { pettyCash, amount, description, invoiceDate, userName } = data as TicketParams;
     const pettyCashSplitted = data.pettyCash.split("/");
     if (pettyCashSplitted.length !== 2 || pettyCashSplitted[0] > 31 || pettyCashSplitted[1] > 12) {
@@ -51,56 +57,69 @@ const InvoiceModal = () => {
     });
   });
 
-  return (
-    <div>
+  return show ? (
+    <>
       <div className="fixed inset-0 z-10 overflow-y-auto">
-        <div className="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+        <div className="flex min-h-screen items-center justify-center sm:block sm:p-0">
           <div className="fixed inset-0 transition-opacity" aria-hidden="true">
-            <div className="absolute inset-0 bg-gray-500 opacity-75"></div>
+            <div className="fixed inset-0 z-20 bg-black/50"></div>
           </div>
 
           <div
-            className="inline-block w-80 align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full"
+            className="fixed top-[50%] left-[50%] z-50 w-[95vw] max-w-md -translate-x-[50%] -translate-y-[50%] overflow-hidden rounded-lg bg-white px-5 py-6 shadow-xl transition-all focus:outline-none focus-visible:ring focus-visible:ring-purple-500 focus-visible:ring-opacity-75 sm:my-8 sm:w-full sm:max-w-lg sm:align-middle md:w-full"
             role="dialog"
             aria-modal="true"
             aria-labelledby="modal-headline"
           >
-            <div className="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
-              <h3 className="text-lg leading-6 font-medium text-gray-900" id="modal-headline">
-                Nuevo movimiento de caja
-              </h3>
-              {inputError && <p className="text-red-600 pt-3">{inputError}</p>}
-            </div>
-            <form onSubmit={onSubmit}>
-              <div className="p-2 ">
-                <label>Tipo de factura</label>
-                <Select options={invoiceTypes} onChange={(e) => setInvoiceType(e?.value || "")} />
-              </div>
+            <h3 className="text-md mb-4 font-medium leading-6 text-gray-900" id="modal-headline">
+              Nuevo movimiento de caja
+            </h3>
+            {inputError && <p className="pt-3 text-red-600">{inputError}</p>}
+
+            <form onSubmit={onSubmit} className="grid gap-2">
+              <SelectInput
+                label="Tipo de Factura"
+                data={invoiceTypes}
+                onChange={(e) => setInvoiceType(e?.value || "")}
+              />
+
               <Input register={register} label="Descripcion" name="description" />
               <Input register={register} label="Monto" type="number" name="amount" />
               <Input register={register} label="Fecha" type="date" name="date" />
-              <div className="p-2">
-                <label>Centro de costos</label>
-                <Select options={costCenterTypes} onChange={(e) => setCostCenter(e?.value || "")} />
-              </div>
-              <div className="p-2">
-                <label>Tipo de gasto</label>
-                <Select options={expenseTypes} onChange={(e) => setExpenseType(e?.value || "")} />
-              </div>
+
+              <SelectInput
+                label="Centro de costos"
+                data={costCenterTypes}
+                onChange={(e) => setCostCenter(e?.value || "")}
+              />
+
+              <SelectInput
+                label="Tipo de gasto"
+                data={expenseTypes}
+                onChange={(e) => setExpenseType(e?.value || "")}
+              />
+
               <Input register={register} label="Caja chica del" placeholder="dd/mm" name="pettyCash" />
 
-              <div className="px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+              <div className="flex gap-2 pt-4 sm:justify-end">
+                <button
+                  type="button"
+                  onClick={handleClose}
+                  className="inline-flex w-full justify-center rounded-md border border-gray-300 bg-gray-200 px-4 py-2 text-base  font-medium text-gray-500  shadow-sm hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-2 sm:mt-0 sm:w-auto sm:text-sm"
+                >
+                  Cerrar
+                </button>
                 <input
                   type="submit"
-                  className="w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2  text-base font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm"
+                  className="inline-flex w-full justify-center rounded-md border border-indigo-600 bg-indigo-600 px-4 py-2  text-base font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 sm:mt-0 sm:w-auto sm:text-sm"
                 />
               </div>
             </form>
           </div>
         </div>
       </div>
-    </div>
-  );
+    </>
+  ) : null;
 };
 
 export default InvoiceModal;

@@ -19,16 +19,15 @@ export const authOptions: NextAuthOptions = {
       else if (new URL(url).origin === baseUrl) return url;
       return baseUrl;
     },
-    async signIn({ account, profile }) {
-      if (
+    signIn({ account, profile }) {
+      if (env.NEXTAUTH_TEST_MODE === "true") return true;
+
+      return Boolean(
         account.provider === "google" &&
-        profile.email &&
-        profile.email_verified &&
-        profile.email.endsWith("@cldproyectos.com")
-      ) {
-        return Promise.resolve(true);
-      }
-      return Promise.resolve(false);
+          profile.email &&
+          profile.email_verified &&
+          profile.email.endsWith("@cldproyectos.com")
+      );
     },
   },
   adapter: PrismaAdapter(prisma),

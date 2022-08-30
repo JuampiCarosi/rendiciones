@@ -4,13 +4,20 @@ import { authOptions } from "./api/auth/[...nextauth]";
 import Top from "../components/Top";
 import ActionsBar from "../components/ActionsBar";
 import InvoiceModal from "../components/InvoiceModal";
+import { useState } from "react";
 
 const Home: NextPage = () => {
+  const [showModal, setShowModal] = useState(false);
   return (
     <>
       <Top />
       <ActionsBar />
-      <InvoiceModal />
+      <button onClick={() => setShowModal((prev) => !prev)}>Open modal</button>
+      <InvoiceModal
+        handleClose={() => setShowModal(false)}
+        handleSubmit={(data) => setShowModal(false)}
+        show={showModal}
+      />
     </>
   );
 };

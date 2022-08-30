@@ -18,10 +18,10 @@ const Input = (props: InputProps) => {
   const { onChange, ref } = register(name);
 
   return (
-    <div className="flex flex-col p-2">
-      <label>{label}</label>
+    <div className="grid gap-1">
+      <label className="text-sm text-gray-600">{label}</label>
       <input
-        className="rounded-lg text-slate-600 font-light border-gray-300 h-10 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+        className="rounded-lg text-gray-800 font-light border-gray-300 h-10 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
         type={type}
         onChange={onChange}
         name={name}
@@ -30,6 +30,48 @@ const Input = (props: InputProps) => {
         placeholder={placeholder}
         style={style}
       />
+      {children}
+    </div>
+  );
+};
+
+export const SelectInput = (props: any) => {
+  const {
+    label,
+    disabled = false,
+    errors = {},
+    errMsg,
+    children,
+    onChange,
+    name,
+    value,
+    register,
+    data,
+    autoFocus,
+    emptyOption = true,
+  } = props;
+
+  return (
+    <div className="grid gap-1">
+      <label className="text-sm text-gray-600">{label}</label>
+      <select
+        className="rounded-lg text-gray-800 font-light border-gray-300 h-10 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+        name={name}
+        disabled={disabled}
+        defaultValue={value}
+        onChange={onChange}
+        ref={register}
+        autoComplete="off"
+        autoFocus={autoFocus}
+      >
+        {emptyOption && <option value="">------</option>}
+        {data.map((opt: any, i: number) => (
+          <option key={i} value={opt.value}>
+            {opt.label}
+          </option>
+        ))}
+      </select>
+      {errors[name] && <span className="error">{errMsg}</span>}
       {children}
     </div>
   );
