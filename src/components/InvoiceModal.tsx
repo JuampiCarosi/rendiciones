@@ -37,6 +37,8 @@ const InvoiceModal = ({ handleClose, show, handleSubmit }: Props) => {
   const [costCenter, setCostCenter] = useState("");
   const [inputError, setInputError] = useState("");
 
+  const mutation = trpc.proxy.tickets.createTicket.useMutation();
+
   const onSubmit = handleSubmitVal((data) => {
     const { pettyCash, amount, description, invoiceDate, userName } = data as TicketParams;
     const pettyCashSplitted = data.pettyCash.split("/");
@@ -45,7 +47,7 @@ const InvoiceModal = ({ handleClose, show, handleSubmit }: Props) => {
       return;
     }
     // setInputError("");
-    trpc.proxy.tickets.createTicket.useQuery({
+    mutation.mutate({
       pettyCash,
       amount,
       description,

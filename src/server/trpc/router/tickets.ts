@@ -15,7 +15,7 @@ const ticketParamsVal = z.object({
 export type TicketParams = z.infer<typeof ticketParamsVal>;
 
 export const ticketsRouter = t.router({
-  createTicket: t.procedure.input(ticketParamsVal).query(async ({ input, ctx }) => {
+  createTicket: t.procedure.input(ticketParamsVal).mutation(async ({ input, ctx }) => {
     const ticketsOnPettyCash = await ctx.prisma.ticket.findMany({
       where: {
         userName: input.userName,
