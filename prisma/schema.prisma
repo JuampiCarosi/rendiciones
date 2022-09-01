@@ -64,14 +64,14 @@ model VerificationToken {
 }
 
 model Ticket {
-    id          String   @id @default(cuid())
-    ticketId    Int
-    invoiceType String
-    description String
-    amount      Float
-    invoiceDate DateTime
-    costCenter  String
-    userName    String
-    expenseType String
-    pettyCash   String
+    id            String   @id @default(cuid())
+    ticketId      Int
+    invoiceType   String
+    description   String
+    amount        Float
+    invoiceDate   DateTime
+    costCenter    String
+    userName      String
+    expenseType   String
+    pettyCashDate DateTime
 }

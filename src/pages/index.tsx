@@ -8,16 +8,13 @@ import { useState } from "react";
 
 const Home: NextPage = () => {
   const [showModal, setShowModal] = useState(false);
+  console.log(new Date());
   return (
     <>
       <Top />
       <ActionsBar />
       <button onClick={() => setShowModal((prev) => !prev)}>Open modal</button>
-      <InvoiceModal
-        handleClose={() => setShowModal(false)}
-        handleSubmit={(data) => setShowModal(false)}
-        show={showModal}
-      />
+      <InvoiceModal show={showModal} handleShow={setShowModal} />
     </>
   );
 };

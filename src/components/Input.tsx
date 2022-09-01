@@ -21,7 +21,7 @@ const Input = (props: InputProps) => {
     <div className="grid gap-1">
       <label className="text-sm text-gray-600">{label}</label>
       <input
-        className="rounded-lg text-gray-800 font-light border-gray-300 h-10 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+        className="h-10 rounded-lg border-gray-300 font-light text-gray-800 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
         type={type}
         onChange={onChange}
         name={name}
@@ -55,12 +55,12 @@ export const SelectInput = (props: any) => {
     <div className="grid gap-1">
       <label className="text-sm text-gray-600">{label}</label>
       <select
-        className="rounded-lg text-gray-800 font-light border-gray-300 h-10 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+        className="h-10 rounded-lg border-gray-300 font-light text-gray-800 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
         name={name}
         disabled={disabled}
         defaultValue={value}
         onChange={onChange}
-        ref={register}
+        {...register(name)}
         autoComplete="off"
         autoFocus={autoFocus}
       >
