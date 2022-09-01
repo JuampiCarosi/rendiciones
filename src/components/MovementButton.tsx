@@ -1,11 +1,12 @@
 import { IconType } from "react-icons/lib";
 
-const MovementButton: ({}: MovementButtonProps) => JSX.Element = ({ label, Icon, style }) => {
+const MovementButton: ({}: MovementButtonProps) => JSX.Element = ({ label, Icon, style, onClick }) => {
   return (
     <div>
       <button
         style={style}
-        className="bg-neutral-500 text-white rounded-lg h-10 px-2 flex items-center justify-center"
+        className="flex h-10 items-center justify-center rounded-lg bg-neutral-500 px-2 text-white"
+        onClick={() => onClick()}
       >
         {Icon && <Icon />}
         {label}
@@ -17,7 +18,7 @@ const MovementButton: ({}: MovementButtonProps) => JSX.Element = ({ label, Icon,
 export default MovementButton;
 
 type MovementButtonProps = {
-  onClick?: () => void;
+  onClick: () => void;
   label: string;
   Icon?: IconType;
   style?: React.CSSProperties;

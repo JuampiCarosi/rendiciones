@@ -9,6 +9,8 @@ const errorMessages = {
   invoiceDate: "fecha del ticket",
   costCenter: "ventro de costos",
   expenseType: "tipo de gasto",
+  fromUser: "usuario origen",
+  toUser: "usuario destino",
 };
 
 type Path = keyof typeof errorMessages;
@@ -17,11 +19,11 @@ export const t = initTRPC<{ ctx: Context }>()({
   transformer: superjson,
   errorFormatter({ shape, error }) {
     let customErrorMessage = "";
+    console.log("Mi error", error.message);
     const errorJson = JSON.parse(error.message);
     if (errorJson[0].code === "too_small") {
       errorJson[0].path.forEach((path: Path) => {
         customErrorMessage += `El campo ${errorMessages[path]} es requerido\n`;
-        console.log(customErrorMessage);
       });
     } else {
       customErrorMessage = "Hubo un error al subir el ticket";
@@ -29,6 +31,7 @@ export const t = initTRPC<{ ctx: Context }>()({
 
     return {
       ...shape,
+      error,
       customErrorMessage,
     };
   },

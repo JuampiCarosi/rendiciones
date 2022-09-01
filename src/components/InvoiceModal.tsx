@@ -75,6 +75,7 @@ const InvoiceModal = ({ handleShow, show }: Props) => {
       expenseType,
       costCenter,
     });
+    handleShow(false);
   });
 
   const errorMessageKeys = Object.keys(formState.errors) as ErrorMessageKeys[];
