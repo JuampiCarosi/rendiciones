@@ -13,6 +13,20 @@ type InputProps = {
   required?: boolean;
 };
 
+type SelectInputProps = {
+  label: string;
+  disabled?: boolean;
+  errors?: Record<string, string>;
+  errMsg?: string;
+  children?: React.ReactNode;
+  name: string;
+  value?: string;
+  register: UseFormRegister<FieldValues>;
+  required?: boolean;
+  data: { value: string; label: string }[];
+  autoFocus?: boolean;
+  emptyOption?: boolean;
+};
 const Input = (props: InputProps) => {
   const { type = "text", label, name, style, placeholder, children, value, register, required } = props;
   if (!name) throw new Error("Input component needs a name prop");
@@ -33,14 +47,13 @@ const Input = (props: InputProps) => {
   );
 };
 
-export const SelectInput = (props: any) => {
+export const SelectInput = (props: SelectInputProps) => {
   const {
     label,
     disabled = false,
     errors = {},
     errMsg,
     children,
-    onChange,
     name,
     value,
     register,
@@ -55,16 +68,14 @@ export const SelectInput = (props: any) => {
       <label className="text-sm text-gray-600">{label}</label>
       <select
         className="h-10 rounded-lg border-gray-300 font-light text-gray-800 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
-        name={name}
         disabled={disabled}
         defaultValue={value}
-        onChange={onChange}
         {...register(name, { required })}
         autoComplete="off"
         autoFocus={autoFocus}
       >
         {emptyOption && <option value="">------</option>}
-        {data.map((opt: any, i: number) => (
+        {data.map((opt, i: number) => (
           <option key={i} value={opt.value}>
             {opt.label}
           </option>
