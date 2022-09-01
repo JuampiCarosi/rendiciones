@@ -2,10 +2,35 @@ import { initTRPC, TRPCError } from "@trpc/server";
 import type { Context } from "./context";
 import superjson from "superjson";
 
+const errorMessages = {
+  invoiceType: "tipo de factura",
+  description: "descripción",
+  amount: "monto",
+  invoiceDate: "fecha del ticket",
+  costCenter: "ventro de costos",
+  expenseType: "tipo de gasto",
+};
+
+type Path = keyof typeof errorMessages;
+
 export const t = initTRPC<{ ctx: Context }>()({
   transformer: superjson,
-  errorFormatter({ shape }) {
-    return shape;
+  errorFormatter({ shape, error }) {
+    let customErrorMessage = "";
+    const errorJson = JSON.parse(error.message);
+    if (errorJson[0].code === "too_small") {
+      errorJson[0].path.forEach((path: Path) => {
+        customErrorMessage += `El campo ${errorMessages[path]} es requerido\n`;
+        console.log(customErrorMessage);
+      });
+    } else {
+      customErrorMessage = "Hubo un error al subir el ticket";
+    }
+
+    return {
+      ...shape,
+      customErrorMessage,
+    };
   },
 });
 

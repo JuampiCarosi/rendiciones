@@ -4,6 +4,17 @@ import { Fragment } from "react";
 import { trpc } from "../utils/trpc";
 import { Dialog, Transition } from "@headlessui/react";
 import { useSession } from "next-auth/react";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+
+export const ticketParamsVal = z.object({
+  amount: z.number().min(1),
+  description: z.string().min(1),
+  invoiceDate: z.date(),
+  expenseType: z.string().min(1),
+  invoiceType: z.string().min(1),
+  costCenter: z.string().min(1),
+});
 
 const invoiceTypes = [
   { value: "a", label: "A" },
@@ -24,31 +35,53 @@ const costCenterTypes = [
   { value: "picc", label: "PICC" },
 ];
 
+const errorMessages = {
+  invoiceType: "tipo de factura",
+  description: "descripción",
+  amount: "monto",
+  invoiceDate: "fecha del ticket",
+  costCenter: "centro de costos",
+  expenseType: "tipo de gasto",
+};
+
+type ErrorMessageKeys = keyof typeof errorMessages;
+
 type Props = {
   handleShow: (show: boolean) => void;
   show: boolean;
 };
 
 const InvoiceModal = ({ handleShow, show }: Props) => {
-  const { register, handleSubmit: handleSubmitVal } = useForm();
+  const {
+    register,
+    handleSubmit: handleSubmitVal,
+    formState,
+  } = useForm({
+    resolver: zodResolver(ticketParamsVal),
+  });
   const { data: session } = useSession();
   const userName = session?.user?.email?.split("@")[0] || "";
 
   const mutation = trpc.proxy.tickets.createTicket.useMutation();
 
-  const onSubmit = handleSubmitVal(
-    ({ amount, description, invoiceDate, invoiceType, expenseType, costCenter }) => {
-      mutation.mutate({
-        amount: Number(amount),
-        description,
-        invoiceDate: new Date(invoiceDate),
-        userName,
-        invoiceType,
-        expenseType,
-        costCenter,
-      });
-    }
-  );
+  const onSubmit = handleSubmitVal((props) => {
+    const { amount, description, invoiceDate, invoiceType, expenseType, costCenter } = props;
+    mutation.mutate({
+      amount: Number(amount),
+      description,
+      invoiceDate: new Date(invoiceDate),
+      userName,
+      invoiceType,
+      expenseType,
+      costCenter,
+    });
+  });
+
+  const errorMessageKeys = Object.keys(formState.errors) as ErrorMessageKeys[];
+  const clientErrorMessageArray = errorMessageKeys.map((key) => {
+    return `El campo  ${errorMessages[key]} es requerido`;
+  });
+  const errorMessage = clientErrorMessageArray.join("\n") || mutation.error?.shape?.customErrorMessage;
 
   return (
     <>
@@ -74,10 +107,16 @@ const InvoiceModal = ({ handleShow, show }: Props) => {
               aria-modal="true"
               aria-labelledby="modal-headline"
             >
-              <Dialog.Title className="text-md mb-4 font-medium leading-6 text-gray-900">
-                Nuevo movimiento de caja
-              </Dialog.Title>
-              {mutation.error && <div className="text-red-500">{mutation.error.message}</div>}
+              <div className=" mb-4">
+                <Dialog.Title className="text-md font-medium leading-6 text-gray-900">
+                  Nuevo movimiento de caja
+                </Dialog.Title>
+                {errorMessage && (
+                  <div className="text-red-500" style={{ whiteSpace: "pre" }}>
+                    {errorMessage}
+                  </div>
+                )}
+              </div>
 
               <form onSubmit={onSubmit} className="grid gap-2">
                 <SelectInput
@@ -85,17 +124,19 @@ const InvoiceModal = ({ handleShow, show }: Props) => {
                   data={invoiceTypes}
                   name="invoiceType"
                   register={register}
+                  required
                 />
 
-                <Input register={register} label="Descripcion" name="description" />
-                <Input register={register} label="Monto" type="number" name="amount" />
-                <Input register={register} label="Fecha del ticket" type="date" name="invoiceDate" />
+                <Input register={register} required label="Descripcion" name="description" />
+                <Input register={register} required label="Monto" type="number" name="amount" />
+                <Input register={register} required label="Fecha del ticket" type="date" name="invoiceDate" />
 
                 <SelectInput
                   label="Centro de costos"
                   data={costCenterTypes}
                   name="costCenter"
                   register={register}
+                  required
                 />
 
                 <SelectInput
@@ -103,6 +144,7 @@ const InvoiceModal = ({ handleShow, show }: Props) => {
                   data={expenseTypes}
                   name="expenseType"
                   register={register}
+                  required
                 />
 
                 <div className="flex gap-2 pt-4 sm:justify-end">

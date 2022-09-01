@@ -10,12 +10,12 @@ type InputProps = {
   name?: string;
   value?: string;
   register: UseFormRegister<FieldValues>;
+  required?: boolean;
 };
 
 const Input = (props: InputProps) => {
-  const { type = "text", label, name, style, placeholder, children, value, register } = props;
+  const { type = "text", label, name, style, placeholder, children, value, register, required } = props;
   if (!name) throw new Error("Input component needs a name prop");
-  const { onChange, ref } = register(name);
 
   return (
     <div className="grid gap-1">
@@ -23,9 +23,7 @@ const Input = (props: InputProps) => {
       <input
         className="h-10 rounded-lg border-gray-300 font-light text-gray-800 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
         type={type}
-        onChange={onChange}
-        name={name}
-        ref={ref}
+        {...register(name, { required, valueAsNumber: type === "number", valueAsDate: type === "date" })}
         defaultValue={value}
         placeholder={placeholder}
         style={style}
@@ -46,6 +44,7 @@ export const SelectInput = (props: any) => {
     name,
     value,
     register,
+    required,
     data,
     autoFocus,
     emptyOption = true,
@@ -60,7 +59,7 @@ export const SelectInput = (props: any) => {
         disabled={disabled}
         defaultValue={value}
         onChange={onChange}
-        {...register(name)}
+        {...register(name, { required })}
         autoComplete="off"
         autoFocus={autoFocus}
       >

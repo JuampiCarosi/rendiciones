@@ -1,14 +1,14 @@
 import { t } from "../trpc";
 import { z } from "zod";
 
-const ticketParamsVal = z.object({
-  amount: z.number(),
-  description: z.string(),
+export const ticketParamsVal = z.object({
+  amount: z.number().min(1),
+  description: z.string().min(1),
   invoiceDate: z.date(),
-  expenseType: z.string(),
-  invoiceType: z.string(),
-  userName: z.string(),
-  costCenter: z.string(),
+  expenseType: z.string().min(1),
+  invoiceType: z.string().min(1),
+  userName: z.string().min(1),
+  costCenter: z.string().min(1),
 });
 
 export type TicketParams = z.infer<typeof ticketParamsVal>;
