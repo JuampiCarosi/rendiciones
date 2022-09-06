@@ -8,14 +8,41 @@ import { FaFileInvoice } from "react-icons/fa";
 import { TbReportMoney } from "react-icons/tb";
 import MovementButton from "../components/MovementButton";
 import EntryModal from "../components/EntryModal";
+import Table from "../components/Table";
+import { trpc } from "../utils/trpc";
+import { CellContext } from "@tanstack/react-table";
+import { Ticket } from "@prisma/client";
 
 const Home: NextPage = () => {
   const [showInvoiceModal, setShowInvoiceModal] = useState(false);
   const [showEntryModal, setShowEntryModal] = useState(false);
 
+  const { data: tickets } = trpc.proxy.tickets.getAll.useQuery();
+
   const handleShowInvoiceModal = (value: boolean) => {
     setShowInvoiceModal(value);
   };
+
+  const columns = [
+    {
+      header: "Fecha",
+      accessorKey: "invoiceDate",
+      cell: (props: { getValue: () => any }) => (
+        <span>
+          {props.getValue()?.toLocaleDateString("es", { day: "2-digit", month: "2-digit", year: "2-digit" })}
+        </span>
+      ),
+    },
+    { header: "Descripción", accessorKey: "description" },
+    {
+      header: "Factura",
+      accessorKey: "invoiceType",
+      cell: (props: { getValue: () => any }) => <span>{props.getValue().toUpperCase()}</span>,
+    },
+    { header: "Tipo", accessorKey: "expenseType" },
+    { header: "Monto", accessorKey: "amount" },
+  ];
+  console.log(tickets);
 
   return (
     <>
@@ -34,6 +61,7 @@ const Home: NextPage = () => {
       </div>
       <InvoiceModal show={showInvoiceModal} handleShow={handleShowInvoiceModal} />
       <EntryModal show={showEntryModal} handleShow={setShowEntryModal} />
+      {tickets && <Table data={tickets} columns={columns} />}
     </>
   );
 };

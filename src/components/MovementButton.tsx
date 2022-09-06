@@ -5,7 +5,7 @@ const MovementButton: ({}: MovementButtonProps) => JSX.Element = ({ label, Icon,
     <div>
       <button
         style={style}
-        className="flex h-10 items-center justify-center rounded-lg bg-neutral-500 px-2 text-white"
+        className="flex h-10 items-center justify-center rounded-lg bg-slate-500	 px-2 text-white"
         onClick={() => onClick()}
       >
         {Icon && <Icon />}

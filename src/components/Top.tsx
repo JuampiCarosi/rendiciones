@@ -8,7 +8,7 @@ const Top = () => {
 
   return (
     <>
-      <div className="h-16 bg-neutral-500 text-xl text-white flex items-center justify-between px-4">
+      <div className="flex h-16	 items-center justify-between bg-slate-600 px-4 text-xl text-white">
         <h2>Rendiciones</h2>
         <Image
           src={profilePicture}

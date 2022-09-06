@@ -34,4 +34,7 @@ export const ticketsRouter = t.router({
       },
     });
   }),
+  getAll: t.procedure.query(async ({ ctx }) => {
+    return ctx.prisma.ticket.findMany();
+  }),
 });
