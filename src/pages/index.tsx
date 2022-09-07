@@ -10,7 +10,7 @@ import MovementButton from "../components/MovementButton";
 import EntryModal from "../components/EntryModal";
 import Table from "../components/Table";
 import { trpc } from "../utils/trpc";
-import { CellContext } from "@tanstack/react-table";
+import { ColumnDef } from "@tanstack/react-table";
 import { Ticket } from "@prisma/client";
 
 const Home: NextPage = () => {
@@ -23,13 +23,17 @@ const Home: NextPage = () => {
     setShowInvoiceModal(value);
   };
 
-  const columns = [
+  const columns: ColumnDef<Ticket>[] = [
     {
       header: "Fecha",
       accessorKey: "invoiceDate",
-      cell: (props: { getValue: () => any }) => (
+      cell: ({ getValue }) => (
         <span>
-          {props.getValue()?.toLocaleDateString("es", { day: "2-digit", month: "2-digit", year: "2-digit" })}
+          {(getValue() as Date)?.toLocaleDateString("es", {
+            day: "2-digit",
+            month: "2-digit",
+            year: "2-digit",
+          })}
         </span>
       ),
     },
@@ -37,7 +41,7 @@ const Home: NextPage = () => {
     {
       header: "Factura",
       accessorKey: "invoiceType",
-      cell: (props: { getValue: () => any }) => <span>{props.getValue().toUpperCase()}</span>,
+      cell: ({ getValue }) => <span>{(getValue() as string).toUpperCase()}</span>,
     },
     { header: "Tipo", accessorKey: "expenseType" },
     { header: "Monto", accessorKey: "amount" },
