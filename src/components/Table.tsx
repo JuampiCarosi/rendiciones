@@ -2,7 +2,7 @@ import { ColumnDef, flexRender, getCoreRowModel, useReactTable } from "@tanstack
 
 interface ReactTableProps<TData> {
   data: TData[];
-  columns: ColumnDef<TData, string | number | Date>[];
+  columns: ColumnDef<TData>[];
 }
 
 const Table = <TData extends object>({ data, columns }: ReactTableProps<TData>) => {
@@ -13,13 +13,13 @@ const Table = <TData extends object>({ data, columns }: ReactTableProps<TData>) 
   });
 
   return (
-    <div className="mx-2 mt-10 overflow-scroll rounded-md bg-slate-200 ">
-      <table>
+    <div className="mx-2 mt-10 overflow-scroll rounded-md bg-slate-200  ">
+      <table className="w-full">
         <thead>
           {table.getHeaderGroups().map((headerGroup) => (
             <tr key={headerGroup.id}>
               {headerGroup.headers.map((header) => (
-                <th key={header.id} className="bg-slate-300	 text-base">
+                <th key={header.id} className="bg-slate-300">
                   {header.isPlaceholder
                     ? null
                     : flexRender(header.column.columnDef.header, header.getContext())}
@@ -32,24 +32,13 @@ const Table = <TData extends object>({ data, columns }: ReactTableProps<TData>) 
           {table.getRowModel().rows.map((row) => (
             <tr key={row.id}>
               {row.getVisibleCells().map((cell) => (
-                <td key={cell.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</td>
+                <td key={cell.id} className="border-y border-stone-300 p-1 text-center">
+                  {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                </td>
               ))}
             </tr>
           ))}
         </tbody>
-        <tfoot>
-          {table.getFooterGroups().map((footerGroup) => (
-            <tr key={footerGroup.id}>
-              {footerGroup.headers.map((header) => (
-                <th key={header.id}>
-                  {header.isPlaceholder
-                    ? null
-                    : flexRender(header.column.columnDef.footer, header.getContext())}
-                </th>
-              ))}
-            </tr>
-          ))}
-        </tfoot>
       </table>
     </div>
   );
