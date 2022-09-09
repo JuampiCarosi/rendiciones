@@ -1,17 +1,5 @@
 import { t } from "../trpc";
-import { z } from "zod";
-
-export const ticketParamsVal = z.object({
-  amount: z.number().min(1),
-  description: z.string().min(1),
-  invoiceDate: z.date(),
-  expenseType: z.string().min(1),
-  invoiceType: z.string().min(1),
-  userName: z.string().min(1),
-  costCenter: z.string().min(1),
-});
-
-export type TicketParams = z.infer<typeof ticketParamsVal>;
+import { ticketParamsVal } from "../../../shared/types";
 
 const getNextWednesday = (date: Date) => {
   const dayTillWednesday = 3 - date.getDay();
@@ -22,7 +10,7 @@ export const ticketsRouter = t.router({
   createTicket: t.procedure.input(ticketParamsVal).mutation(async ({ input, ctx }) => {
     const ticketsOnPettyCash = await ctx.prisma.ticket.findMany({
       where: {
-        userName: input.userName,
+        id: ctx.session?.user?.id,
       },
     });
     const ticketId = ticketsOnPettyCash.length + 1;
@@ -30,6 +18,7 @@ export const ticketsRouter = t.router({
       data: {
         ...input,
         ticketId,
+        userName: ctx.session?.user?.name || "usuario generico",
         pettyCashDate: getNextWednesday(new Date()),
       },
     });

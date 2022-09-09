@@ -13,13 +13,13 @@ const Table = <TData extends object>({ data, columns }: ReactTableProps<TData>) 
   });
 
   return (
-    <div className="mx-2 mt-10 overflow-scroll rounded-md bg-slate-200  ">
+    <div className="overflow-scroll rounded-md bg-slate-200 ">
       <table className="w-full">
         <thead>
           {table.getHeaderGroups().map((headerGroup) => (
             <tr key={headerGroup.id}>
               {headerGroup.headers.map((header) => (
-                <th key={header.id} className="bg-slate-300">
+                <th key={header.id} className="bg-slate-300 py-1 px-2">
                   {header.isPlaceholder
                     ? null
                     : flexRender(header.column.columnDef.header, header.getContext())}
@@ -32,7 +32,7 @@ const Table = <TData extends object>({ data, columns }: ReactTableProps<TData>) 
           {table.getRowModel().rows.map((row) => (
             <tr key={row.id}>
               {row.getVisibleCells().map((cell) => (
-                <td key={cell.id} className="border-y border-stone-300 p-1 text-center">
+                <td key={cell.id} className="border-y border-stone-300 py-1 px-2 text-center">
                   {flexRender(cell.column.columnDef.cell, cell.getContext())}
                 </td>
               ))}

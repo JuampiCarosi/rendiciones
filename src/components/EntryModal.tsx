@@ -32,6 +32,7 @@ const EntryModal = ({ handleShow, show }: Props) => {
     register,
     handleSubmit: handleSubmitVal,
     formState,
+    reset,
   } = useForm({
     resolver: zodResolver(entryParamsVal),
   });
@@ -42,9 +43,21 @@ const EntryModal = ({ handleShow, show }: Props) => {
       return { value: user.value || "", label: user.label || "" };
     }) || [];
 
+  const allowedUsers = trpc.proxy.users.getAllowedTransfers.useQuery();
+  const allowedUsersData =
+    allowedUsers.data?.map((user) => {
+      return { value: user.value || "", label: user.label || "" };
+    }) || [];
+
   const mutation = trpc.proxy.movements.createMovement.useMutation();
 
+  const handleClose = () => {
+    handleShow(false);
+    reset();
+  };
+
   const onSubmit = handleSubmitVal((props) => {
+    console.log(props);
     const { fromUser, toUser, amount, description } = props;
     mutation.mutate({
       fromUser,
@@ -53,7 +66,7 @@ const EntryModal = ({ handleShow, show }: Props) => {
       description,
       date: new Date(),
     });
-    handleShow(false);
+    handleClose();
   });
 
   const errorMessageKeys = Object.keys(formState.errors) as ErrorMessageKeys[];
@@ -102,7 +115,7 @@ const EntryModal = ({ handleShow, show }: Props) => {
               <form onSubmit={onSubmit} className="grid gap-2">
                 <SelectInput
                   label="De usuario"
-                  data={usersData}
+                  data={allowedUsersData}
                   name="fromUser"
                   register={register}
                   required
@@ -120,7 +133,7 @@ const EntryModal = ({ handleShow, show }: Props) => {
                 <div className="flex gap-2 pt-4 sm:justify-end">
                   <button
                     type="button"
-                    onClick={() => handleShow(false)}
+                    onClick={handleClose}
                     className="inline-flex w-full justify-center rounded-md border border-gray-300 bg-gray-200 px-4 py-2 text-base  font-medium text-gray-500  shadow-sm hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-2 sm:mt-0 sm:w-auto sm:text-sm"
                   >
                     Cerrar

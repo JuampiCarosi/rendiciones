@@ -3,7 +3,6 @@ import { useForm } from "react-hook-form";
 import { Fragment } from "react";
 import { trpc } from "../utils/trpc";
 import { Dialog, Transition } from "@headlessui/react";
-import { useSession } from "next-auth/react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 
@@ -59,8 +58,6 @@ const InvoiceModal = ({ handleShow, show }: Props) => {
   } = useForm({
     resolver: zodResolver(ticketParamsVal),
   });
-  const { data: session } = useSession();
-  const userName = session?.user?.email?.split("@")[0] || "";
 
   const mutation = trpc.proxy.tickets.createTicket.useMutation();
 
@@ -70,7 +67,6 @@ const InvoiceModal = ({ handleShow, show }: Props) => {
       amount: Number(amount),
       description,
       invoiceDate: new Date(invoiceDate),
-      userName,
       invoiceType,
       expenseType,
       costCenter,
