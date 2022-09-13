@@ -51,6 +51,8 @@ type Props = {
 };
 
 const InvoiceModal = ({ handleShow, show }: Props) => {
+  const utils = trpc.useContext();
+
   const {
     register,
     handleSubmit: handleSubmitVal,
@@ -59,7 +61,11 @@ const InvoiceModal = ({ handleShow, show }: Props) => {
     resolver: zodResolver(ticketParamsVal),
   });
 
-  const mutation = trpc.proxy.tickets.createTicket.useMutation();
+  const mutation = trpc.proxy.tickets.createTicket.useMutation({
+    onSuccess: () => {
+      utils.invalidateQueries();
+    },
+  });
 
   const onSubmit = handleSubmitVal((props) => {
     const { amount, description, invoiceDate, invoiceType, expenseType, costCenter } = props;

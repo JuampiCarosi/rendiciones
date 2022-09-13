@@ -28,6 +28,8 @@ const errorMessages = {
 type ErrorMessageKeys = keyof typeof errorMessages;
 
 const EntryModal = ({ handleShow, show }: Props) => {
+  const utils = trpc.useContext();
+
   const {
     register,
     handleSubmit: handleSubmitVal,
@@ -49,7 +51,11 @@ const EntryModal = ({ handleShow, show }: Props) => {
       return { value: user.value || "", label: user.label || "" };
     }) || [];
 
-  const mutation = trpc.proxy.movements.createMovement.useMutation();
+  const mutation = trpc.proxy.movements.createMovement.useMutation({
+    onSuccess: () => {
+      utils.invalidateQueries();
+    },
+  });
 
   const handleClose = () => {
     handleShow(false);

@@ -1,3 +1,4 @@
+import { z } from "zod";
 import { t } from "../trpc";
 
 export const usersRouter = t.router({
@@ -33,5 +34,14 @@ export const usersRouter = t.router({
       value: user.id,
       label: user.name,
     }));
+  }),
+  getById: t.procedure.input(z.string()).query(async ({ ctx, input }) => {
+    const user = await ctx.prisma.user.findUnique({
+      where: {
+        id: input,
+      },
+      select: { name: true },
+    });
+    return user;
   }),
 });

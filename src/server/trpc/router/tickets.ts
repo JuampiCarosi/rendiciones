@@ -24,6 +24,10 @@ export const ticketsRouter = t.router({
     });
   }),
   getAll: t.procedure.query(async ({ ctx }) => {
-    return ctx.prisma.ticket.findMany();
+    return ctx.prisma.ticket.findMany({
+      orderBy: {
+        pettyCashDate: "desc",
+      },
+    });
   }),
 });
