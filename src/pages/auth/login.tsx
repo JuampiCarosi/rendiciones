@@ -3,8 +3,8 @@ import Image from "next/image";
 
 const Login = () => {
   return (
-    <div className="h-screen flex items-center justify-center bg-gray-100">
-      <div className="absolute top-1/4 min-w-290 py-12 px-4 sm:px-6 lg:px-8 rounded-md bg-white border shadow-sm">
+    <div className="flex h-screen items-center justify-center bg-gray-100">
+      <div className="min-w-290 absolute top-1/4 rounded-md border bg-white py-16 px-8 shadow-sm sm:px-6 lg:px-8">
         <div className="flex flex-col items-center justify-center">
           <Image
             className="mx-auto h-12 w-auto"
@@ -15,10 +15,10 @@ const Login = () => {
           />
           <h2 className="mt-6 text-center text-2xl tracking-tight text-gray-900">Rendiciones</h2>
         </div>
-        <div className="rounded-md shadow-sm w-3/4 m-auto mt-4">
+        <div className="m-auto mt-4 w-3/4 rounded-md shadow-sm">
           <button
             type="submit"
-            className="group relative w-full py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+            className="group relative w-full rounded-md border border-transparent bg-indigo-600 py-2 px-4 text-sm font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
             onClick={() => signIn("google", { callbackUrl: "http://localhost:3000/" })}
           >
             Iniciar sesion
