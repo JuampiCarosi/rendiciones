@@ -4,13 +4,12 @@ import { authOptions } from "./api/auth/[...nextauth]";
 import Top from "../components/Top";
 import TicketModal from "../components/TicketModal";
 import { useState } from "react";
-import { FaFileInvoice } from "react-icons/fa";
-import { TbReportMoney } from "react-icons/tb";
-import MovementButton from "../components/MovementButton";
+
 import EntryModal from "../components/MovementModal";
 import { trpc } from "../utils/trpc";
 import TicketCard from "../components/TicketCard";
 import MovementCard from "../components/MovementCard";
+import Bottom from "../components/Bottom";
 
 const Home: NextPage = () => {
   const [showTicketModal, setShowTicketModal] = useState(false);
@@ -30,22 +29,13 @@ const Home: NextPage = () => {
   return (
     <>
       <Top />
-      <div className="flex justify-around pt-4">
-        <MovementButton
-          label="Nuevo ticket"
-          onClick={() => setShowTicketModal((prev) => !prev)}
-          Icon={FaFileInvoice}
-        />
-        <MovementButton
-          label="Nuevo moviemiento de caja"
-          onClick={() => setShowEntryModal((prev) => !prev)}
-          Icon={TbReportMoney}
-        />
-      </div>
       <TicketModal show={showTicketModal} handleShow={handleShowTicketModal} />
       <EntryModal show={showEntryModal} handleShow={handleShowEntryModal} />
-      {tickets && tickets.map((ticket, i) => <TicketCard key={i} ticket={ticket} />)}
-      {movements && movements.map((movement, i) => <MovementCard key={i} movement={movement} />)}
+      <div className="cards-container w-full overflow-scroll pt-2">
+        {tickets && tickets.map((ticket, i) => <TicketCard key={i} ticket={ticket} />)}
+        {movements && movements.map((movement, i) => <MovementCard key={i} movement={movement} />)}
+      </div>
+      <Bottom handleShowEntryModal={handleShowEntryModal} handleShowTicketModal={handleShowTicketModal} />
     </>
   );
 };

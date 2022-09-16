@@ -3,8 +3,8 @@ module.exports = {
   content: ["./src/**/*.{js,ts,jsx,tsx}"],
   theme: {
     extend: {
-      minWidth: {
-        290: "290px",
+      colors: {
+        background: "#f3f4f6",
       },
     },
   },

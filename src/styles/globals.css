@@ -5,3 +5,7 @@
  body {
     background-color: #f3f4f6;
  }
+
+ .cards-container {
+   height: calc(100vh - 10.5rem);
+ }
