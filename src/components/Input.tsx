@@ -41,6 +41,7 @@ const Input = (props: InputProps) => {
         defaultValue={value}
         placeholder={placeholder}
         style={style}
+        autoComplete="off"
       />
       {children}
     </div>

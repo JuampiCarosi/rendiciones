@@ -63,7 +63,6 @@ const EntryModal = ({ handleShow, show }: Props) => {
   };
 
   const onSubmit = handleSubmitVal((props) => {
-    console.log(props);
     const { fromUser, toUser, amount, description } = props;
     mutation.mutate({
       fromUser,

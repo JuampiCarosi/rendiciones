@@ -3,7 +3,6 @@ import { t } from "../trpc";
 
 export const movementsRouter = t.router({
   createMovement: t.procedure.input(movementsParamsVal).mutation(async ({ input, ctx }) => {
-    console.log(ctx.prisma);
     return ctx.prisma.movements.create({
       data: {
         ...input,
@@ -11,6 +10,10 @@ export const movementsRouter = t.router({
     });
   }),
   getAll: t.procedure.query(async ({ ctx }) => {
-    return ctx.prisma.movements.findMany();
+    return ctx.prisma.movements.findMany({
+      orderBy: {
+        date: "desc",
+      },
+    });
   }),
 });

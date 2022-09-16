@@ -8,6 +8,7 @@ const getNextWednesday = (date: Date) => {
 
 export const ticketsRouter = t.router({
   createTicket: t.procedure.input(ticketParamsVal).mutation(async ({ input, ctx }) => {
+    if (!ctx.session?.user) throw new Error("Not logged in");
     const ticketsOnPettyCash = await ctx.prisma.ticket.findMany({
       where: {
         id: ctx.session?.user?.id,
@@ -19,6 +20,7 @@ export const ticketsRouter = t.router({
         ...input,
         ticketId,
         userName: ctx.session?.user?.name || "usuario generico",
+        userId: ctx.session?.user?.id,
         pettyCashDate: getNextWednesday(new Date()),
       },
     });

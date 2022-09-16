@@ -16,3 +16,4 @@ export const movementsParamsVal = z.object({
   toUser: z.string().min(1),
   date: z.date(),
 });
+export type expenseTypes = "combustible" | "viaticos" | "peajes" | "otros";
