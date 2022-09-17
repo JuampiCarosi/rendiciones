@@ -7,7 +7,7 @@ export const ticketsRouter = t.router({
     if (!ctx.session?.user) throw new Error("Not logged in");
     const ticketsOnPettyCash = await ctx.prisma.ticket.findMany({
       where: {
-        id: ctx.session?.user?.id,
+        userId: ctx.session?.user?.id,
       },
     });
     const ticketId = ticketsOnPettyCash.length + 1;
