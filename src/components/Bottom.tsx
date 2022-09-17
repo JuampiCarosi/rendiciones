@@ -9,7 +9,7 @@ type BottomParams = {
 
 const Bottom = ({ handleShowTicketModal, handleShowEntryModal }: BottomParams) => {
   return (
-    <div className="flex justify-around bg-background py-8">
+    <div className="fixed bottom-0 flex w-full justify-around bg-background pb-8 pt-4">
       <Button label="Nuevo ticket" onClick={() => handleShowTicketModal(true)} Icon={FaFileInvoice} />
       <Button
         label="Nuevo moviemiento de caja"

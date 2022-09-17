@@ -83,11 +83,7 @@ const EntryModal = ({ handleShow, show }: Props) => {
 
   return (
     <>
-      {show && (
-        <div className="fixed inset-0 transition-opacity" aria-hidden="true">
-          <div className="fixed inset-0 z-20 bg-black/30"></div>
-        </div>
-      )}
+      {show && <div className="fixed inset-0 z-20 bg-black/30 transition-opacity" aria-hidden="true"></div>}
       <Transition
         enter="transition duration-100 ease-out"
         enterFrom="transform scale-95 opacity-0"
@@ -98,7 +94,7 @@ const EntryModal = ({ handleShow, show }: Props) => {
         show={show}
         as={Fragment}
       >
-        <Dialog onClose={() => handleShow(false)} className="fixed inset-0 z-10 overflow-y-auto">
+        <Dialog onClose={() => handleShow(false)} className="fixed inset-0 z-30 overflow-y-auto">
           <div className="flex min-h-screen items-center justify-center sm:block sm:p-0">
             <Dialog.Panel
               className="fixed top-[50%] left-[50%] z-50 w-[95vw] max-w-md -translate-x-[50%] -translate-y-[50%] overflow-hidden rounded-lg bg-white px-5 py-6 shadow-xl transition-all focus:outline-none focus-visible:ring focus-visible:ring-purple-500 focus-visible:ring-opacity-75 sm:my-8 sm:w-full sm:max-w-lg sm:align-middle md:w-full"
