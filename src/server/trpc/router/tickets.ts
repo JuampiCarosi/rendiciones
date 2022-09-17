@@ -1,10 +1,6 @@
 import { t } from "../trpc";
 import { ticketParamsVal } from "../../../shared/types";
-
-const getNextWednesday = (date: Date) => {
-  const dayTillWednesday = 3 - date.getDay();
-  return new Date(date.setDate(date.getDate() + dayTillWednesday + (dayTillWednesday < 0 ? 7 : 0)));
-};
+import { getNextWednesday } from "../../../utils/helpers";
 
 export const ticketsRouter = t.router({
   createTicket: t.procedure.input(ticketParamsVal).mutation(async ({ input, ctx }) => {

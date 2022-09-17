@@ -20,11 +20,11 @@ model Account {
   provider          String
   providerAccountId String
   refresh_token     String?
-  access_token      String?
+  access_token      String? @db.Text
   expires_at        Int?
   token_type        String?
   scope             String?
-  id_token          String?
+  id_token          String? @db.Text
   session_state     String?
   user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
@@ -72,10 +72,11 @@ model Ticket {
 }
 
 model Movements {
-  id          String   @id @default(cuid())
-  date        DateTime
-  amount      Float
-  description String
-  fromUser    String
-  toUser      String
+  id            String   @id @default(cuid())
+  date          DateTime
+  amount        Float
+  description   String
+  fromUser      String
+  toUser        String
+  pettyCashDate DateTime
 }
