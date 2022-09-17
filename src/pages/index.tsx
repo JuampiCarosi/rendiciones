@@ -27,16 +27,16 @@ const Home: NextPage = () => {
   };
 
   return (
-    <>
+    <div className="flex h-full flex-col">
       <Top />
       <TicketModal show={showTicketModal} handleShow={handleShowTicketModal} />
       <EntryModal show={showEntryModal} handleShow={handleShowEntryModal} />
-      <div className="cards-container w-full overflow-scroll pt-2">
+      <div className="w-full grow overflow-scroll pt-2">
         {tickets && tickets.map((ticket, i) => <TicketCard key={i} ticket={ticket} />)}
         {movements && movements.map((movement, i) => <MovementCard key={i} movement={movement} />)}
       </div>
       <Bottom handleShowEntryModal={handleShowEntryModal} handleShowTicketModal={handleShowTicketModal} />
-    </>
+    </div>
   );
 };
 

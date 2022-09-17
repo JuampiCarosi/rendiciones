@@ -2,10 +2,10 @@
 @tailwind components;
 @tailwind utilities;
 
- body {
-    background-color: #f3f4f6;
- }
+body {
+  background-color: #f3f4f6;
+}
 
- .cards-container {
-   height: calc(100vh - 12.5rem);
- }
+#__next {
+  height: 100%;
+}

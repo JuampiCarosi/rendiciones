@@ -11,18 +11,22 @@ const Top = () => {
   const formatoPesos = new Intl.NumberFormat("es-AR");
 
   return (
-    <div className="flex h-16	 items-center justify-between bg-slate-600 px-4  text-white">
-      <Image
-        src={profilePicture}
-        alt="Profile"
-        height="48px"
-        width="48px"
-        className="rounded-full"
-        onDoubleClick={() => signOut()}
-      />
-      <div className="flex justify-between gap-2 text-lg ">
-        <h2>Saldo:</h2>
-        <span>${formatoPesos.format(balance || 0)}</span>
+    <div className="flex h-16 items-center justify-between gap-4 bg-white px-4 text-slate-600  shadow-md shadow-slate-200">
+      <select className="rounded border-none text-lg outline-none focus:border-none focus:outline-none active:outline-none">
+        <option className="">Marzo 10-17</option>
+      </select>
+      <div className="flex items-center gap-4">
+        <span className="text-md rounded-md bg-slate-300 px-4 py-1">
+          $ {formatoPesos.format(balance || 0)}
+        </span>
+        <Image
+          src={profilePicture}
+          alt="Profile"
+          height="40px"
+          width="40px"
+          className="rounded-full"
+          onDoubleClick={() => signOut()}
+        />
       </div>
     </div>
   );
