@@ -16,6 +16,9 @@ function defineNextConfig(config) {
 export default defineNextConfig({
   reactStrictMode: true,
   swcMinify: true,
+  env: {
+    NEXTAUTH_URL: env?.NEXTAUTH_URL || "",
+  },
   images: {
     domains: ["www.cldproyectos.com", "lh3.googleusercontent.com"],
   },
