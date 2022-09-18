@@ -21,7 +21,7 @@ const TicketCard = ({ ticket }: TicketCardProps) => {
 
   return (
     <div className=" p-2">
-      <div className=" flex flex-col items-start gap-1 rounded-lg	border bg-gray-50 p-4 text-center	shadow-sm">
+      <div className=" flex flex-col items-start gap-1 rounded-lg	border bg-gray-50 p-4 shadow-sm">
         <div className=" w-full overflow-hidden text-ellipsis whitespace-nowrap	pb-1 text-lg font-semibold">
           <span>{ticket.description}</span>
         </div>
