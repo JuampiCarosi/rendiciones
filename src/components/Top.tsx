@@ -11,7 +11,7 @@ const Top = () => {
   const formatoPesos = new Intl.NumberFormat("es-AR");
 
   return (
-    <div className="flex h-16 items-center justify-between gap-4 bg-white px-4 text-slate-600  shadow-md shadow-slate-200">
+    <div className="absolute flex h-12 w-full items-center justify-between gap-4 bg-white px-4 text-slate-600  shadow-md shadow-slate-200">
       <select className="rounded border-none text-lg outline-none focus:border-none focus:outline-none active:outline-none">
         <option className="">Marzo 10-17</option>
       </select>

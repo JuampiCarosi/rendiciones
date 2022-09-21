@@ -32,6 +32,7 @@ const Home: NextPage = () => {
       <TicketModal show={showTicketModal} handleShow={handleShowTicketModal} />
       <EntryModal show={showEntryModal} handleShow={handleShowEntryModal} />
       <div className="w-full grow overflow-scroll pt-2">
+        <div className="h-12"></div>
         {tickets && tickets.map((ticket, i) => <TicketCard key={i} ticket={ticket} />)}
         {movements && movements.map((movement, i) => <MovementCard key={i} movement={movement} />)}
       </div>
