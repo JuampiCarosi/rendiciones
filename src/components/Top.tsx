@@ -3,17 +3,31 @@ import Image from "next/image";
 import defaultProfilePicture from "../../public/profile.png";
 import { trpc } from "../utils/trpc";
 
-const Top = () => {
+type Props = {
+  setPettyCashDate: (pettyCash: Date) => void;
+};
+
+const Top = ({ setPettyCashDate }: Props) => {
   const { data: session } = useSession();
   const profilePicture = session?.user?.image || defaultProfilePicture;
 
   const { data: balance } = trpc.proxy.balances.getBalance.useQuery();
   const formatoPesos = new Intl.NumberFormat("es-AR");
 
+  const { data: getPettyCasheDates } = trpc.proxy.tickets.getPettyCashDates.useQuery();
+
   return (
     <div className="absolute flex h-12 w-full items-center justify-between gap-4 bg-white px-4 text-slate-600  shadow-md shadow-slate-200">
-      <select className="rounded border-none text-lg outline-none focus:border-none focus:outline-none active:outline-none">
-        <option className="">Marzo 10-17</option>
+      <select
+        onChange={(e) => setPettyCashDate(new Date(e.target.value))}
+        className="rounded border-none text-lg outline-none focus:border-none focus:outline-none active:outline-none"
+      >
+        {getPettyCasheDates &&
+          getPettyCasheDates.map((pettycash, i) => (
+            <option key={i} value={pettycash.date.toDateString()}>
+              {pettycash.label}
+            </option>
+          ))}
       </select>
       <div className="flex items-center gap-4">
         <span className="text-md rounded-md bg-slate-300 px-4 py-1">
