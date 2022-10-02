@@ -1,3 +1,4 @@
+import { z } from "zod";
 import { movementsParamsVal } from "../../../shared/types";
 import { getNextWednesday } from "../../../utils/helpers";
 import { t } from "../trpc";
@@ -11,9 +12,11 @@ export const movementsRouter = t.router({
       },
     });
   }),
-  getAll: t.procedure.query(async ({ ctx }) => {
+  getByDate: t.procedure.input(z.date()).query(async ({ ctx, input }) => {
     return ctx.prisma.movements.findMany({
       where: {
+        pettyCashDate: getNextWednesday(input),
+
         OR: [
           {
             fromUser: ctx.session?.user?.id,

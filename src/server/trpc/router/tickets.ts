@@ -1,6 +1,6 @@
 import { t } from "../trpc";
 import { ticketParamsVal } from "../../../shared/types";
-import { getNextWednesday } from "../../../utils/helpers";
+import { getNextWednesday, parsePettyCashDate } from "../../../utils/helpers";
 import { z } from "zod";
 
 export const ticketsRouter = t.router({
@@ -32,12 +32,9 @@ export const ticketsRouter = t.router({
       },
       distinct: ["pettyCashDate"],
     });
+    if (pettyCashDates.length === 0) return [{ date: new Date(), label: "No hay cajas" }];
     const parsedPettyCashDates = pettyCashDates.map((ticket) => {
-      const date = new Date(ticket.pettyCashDate)
-        .toLocaleDateString("es-AR", { year: "numeric", month: "short", day: "numeric" })
-        .split(" ");
-      const parsedDate = `${date[2]} ${date[0]}-${Number(date[0]) + 7}`;
-      return { date: ticket.pettyCashDate, label: parsedDate };
+      return parsePettyCashDate(ticket.pettyCashDate);
     });
     if (parsedPettyCashDates.length > 5) {
       return parsedPettyCashDates.slice(0, 5);
@@ -55,11 +52,7 @@ export const ticketsRouter = t.router({
       distinct: ["pettyCashDate"],
     });
     if (!ticket) return { date: new Date(), label: "No hay cajas" };
-    const date = new Date(ticket.pettyCashDate)
-      .toLocaleDateString("es-AR", { year: "numeric", month: "short", day: "numeric" })
-      .split(" ");
-    const parsedDate = `${date[2]} ${date[0]}-${Number(date[0]) + 7}`;
-    return { date: ticket.pettyCashDate, label: parsedDate };
+    return parsePettyCashDate(ticket.pettyCashDate);
   }),
   getByDate: t.procedure.input(z.date()).query(async ({ ctx, input }) => {
     return ctx.prisma.ticket.findMany({
