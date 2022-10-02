@@ -3,6 +3,10 @@ import { ticketParamsVal } from "../../../shared/types";
 import { getNextWednesday, parsePettyCashDate } from "../../../utils/helpers";
 import { z } from "zod";
 
+const editTicketsVal = ticketParamsVal.extend({
+  id: z.string(),
+});
+
 export const ticketsRouter = t.router({
   createTicket: t.procedure.input(ticketParamsVal).mutation(async ({ input, ctx }) => {
     if (!ctx.session?.user) throw new Error("Not logged in");
@@ -62,6 +66,22 @@ export const ticketsRouter = t.router({
       },
       orderBy: {
         pettyCashDate: "desc",
+      },
+    });
+  }),
+  editTicket: t.procedure.input(editTicketsVal).mutation(async ({ input, ctx }) => {
+    if (!ctx.session?.user) throw new Error("Not logged in");
+    await ctx.prisma.ticket.update({
+      where: {
+        id: input.id,
+      },
+      data: {
+        amount: input.amount,
+        description: input.description,
+        invoiceDate: input.invoiceDate,
+        expenseType: input.expenseType,
+        invoiceType: input.invoiceType,
+        costCenter: input.costCenter,
       },
     });
   }),
