@@ -1,10 +1,12 @@
 import Input, { SelectInput } from "./Input";
 import { useForm } from "react-hook-form";
-import { Fragment } from "react";
+import { Fragment, useState } from "react";
 import { trpc } from "../utils/trpc";
 import { Dialog, Transition } from "@headlessui/react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
+import Button from "./Button";
+import ConfirmModal from "./ConfirmModal";
 
 export const ticketParamsVal = z.object({
   amount: z.number().min(1),
@@ -69,6 +71,11 @@ const EditTicketModal = ({
   costCenter,
 }: Props) => {
   const utils = trpc.useContext();
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
+
+  const handleShowConfirmModal = (show: boolean) => {
+    setShowConfirmModal(show);
+  };
 
   const {
     register,
@@ -81,6 +88,7 @@ const EditTicketModal = ({
   const mutation = trpc.tickets.editTicket.useMutation({
     onSuccess() {
       utils.tickets.getByDate.invalidate();
+      utils.balances.getBalance.invalidate();
     },
   });
 
@@ -106,6 +114,13 @@ const EditTicketModal = ({
 
   return (
     <>
+      <ConfirmModal
+        show={showConfirmModal}
+        handleShow={handleShowConfirmModal}
+        title="Eliminar Ticket"
+        message={"Estas seguro que queres eliminar el ticket? " + "\n" + " Esta accion no se puede deshacer!"}
+        onConfirm={() => alert("Ticket eliminado!")}
+      />
       {show && <div className="fixed inset-0 z-20 bg-black/30 transition-opacity" aria-hidden="true"></div>}
       <Transition
         enter="transition duration-100 ease-out"
@@ -126,9 +141,16 @@ const EditTicketModal = ({
               aria-labelledby="modal-headline"
             >
               <div className=" mb-4">
-                <Dialog.Title className="text-md font-medium leading-6 text-gray-900">
-                  Nuevo movimiento de caja
-                </Dialog.Title>
+                <div className="flex content-center justify-between">
+                  <Dialog.Title className="text-md font-medium leading-6 text-gray-900">
+                    Editar ticket
+                  </Dialog.Title>
+                  <Button
+                    label="Eliminar"
+                    className="bg-red-600 px-4"
+                    onClick={() => setShowConfirmModal(true)}
+                  />
+                </div>
                 {errorMessage && (
                   <div className="text-red-500" style={{ whiteSpace: "pre" }}>
                     {errorMessage}
