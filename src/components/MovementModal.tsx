@@ -39,21 +39,21 @@ const EntryModal = ({ handleShow, show }: Props) => {
     resolver: zodResolver(entryParamsVal),
   });
 
-  const users = trpc.proxy.users.getAll.useQuery();
+  const users = trpc.users.getAll.useQuery();
   const usersData =
     users.data?.map((user) => {
       return { value: user.value || "", label: user.label || "" };
     }) || [];
 
-  const allowedUsers = trpc.proxy.users.getAllowedTransfers.useQuery();
+  const allowedUsers = trpc.users.getAllowedTransfers.useQuery();
   const allowedUsersData =
     allowedUsers.data?.map((user) => {
       return { value: user.value || "", label: user.label || "" };
     }) || [];
 
-  const mutation = trpc.proxy.movements.createMovement.useMutation({
-    onSuccess: () => {
-      utils.invalidateQueries();
+  const mutation = trpc.movements.createMovement.useMutation({
+    onSuccess() {
+      utils.movements.getByDate.invalidate();
     },
   });
 

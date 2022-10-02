@@ -14,14 +14,14 @@ import Bottom from "../components/Bottom";
 const Home: NextPage = () => {
   const [showTicketModal, setShowTicketModal] = useState(false);
   const [showEntryModal, setShowEntryModal] = useState(false);
-  const [pettyCashDate, setPettyCashDate] = useState<Date>();
+  const [currentPettyCash, setCurrentPettyCash] = useState<Date>();
 
-  const { data: movements } = trpc.proxy.movements.getAll.useQuery();
-  const { data: pettyCash } = trpc.proxy.tickets.getCurrentPettyCash.useQuery();
-  const { data: tickets } = trpc.proxy.tickets.getByDate.useQuery(pettyCashDate || new Date());
+  const { data: movements } = trpc.movements.getByDate.useQuery(currentPettyCash || new Date());
+  const { data: pettyCash } = trpc.tickets.getCurrentPettyCash.useQuery();
+  const { data: tickets } = trpc.tickets.getByDate.useQuery(currentPettyCash || new Date());
 
   useEffect(() => {
-    if (pettyCash) setPettyCashDate(pettyCash.date);
+    if (pettyCash) setCurrentPettyCash(pettyCash.date);
   }, [pettyCash]);
 
   const handleShowTicketModal = (value: boolean) => {
@@ -34,7 +34,7 @@ const Home: NextPage = () => {
 
   return (
     <div className="flex h-full flex-col">
-      <Top setPettyCashDate={setPettyCashDate} />
+      <Top setPettyCash={setCurrentPettyCash} />
       <TicketModal show={showTicketModal} handleShow={handleShowTicketModal} />
       <EntryModal show={showEntryModal} handleShow={handleShowEntryModal} />
       <div className="w-full grow overflow-scroll pt-2">

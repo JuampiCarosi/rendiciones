@@ -4,26 +4,26 @@ import defaultProfilePicture from "../../public/profile.png";
 import { trpc } from "../utils/trpc";
 
 type Props = {
-  setPettyCashDate: (pettyCash: Date) => void;
+  setPettyCash: (pettyCash: Date) => void;
 };
 
-const Top = ({ setPettyCashDate }: Props) => {
+const Top = ({ setPettyCash }: Props) => {
   const { data: session } = useSession();
   const profilePicture = session?.user?.image || defaultProfilePicture;
 
-  const { data: balance } = trpc.proxy.balances.getBalance.useQuery();
+  const { data: balance } = trpc.balances.getBalance.useQuery();
   const formatoPesos = new Intl.NumberFormat("es-AR");
 
-  const { data: getPettyCasheDates } = trpc.proxy.tickets.getPettyCashDates.useQuery();
+  const { data: pettyCasheDates } = trpc.tickets.getPettyCashDates.useQuery();
 
   return (
     <div className="absolute flex h-12 w-full items-center justify-between gap-4 bg-white px-4 text-slate-600  shadow-md shadow-slate-200">
       <select
-        onChange={(e) => setPettyCashDate(new Date(e.target.value))}
+        onChange={(e) => setPettyCash(new Date(e.target.value))}
         className="rounded border-none text-lg outline-none focus:border-none focus:outline-none active:outline-none"
       >
-        {getPettyCasheDates &&
-          getPettyCasheDates.map((pettycash, i) => (
+        {pettyCasheDates &&
+          pettyCasheDates.map((pettycash, i) => (
             <option key={i} value={pettycash.date.toDateString()}>
               {pettycash.label}
             </option>

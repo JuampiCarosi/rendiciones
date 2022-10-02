@@ -61,9 +61,10 @@ const InvoiceModal = ({ handleShow, show }: Props) => {
     resolver: zodResolver(ticketParamsVal),
   });
 
-  const mutation = trpc.proxy.tickets.createTicket.useMutation({
+  const mutation = trpc.tickets.createTicket.useMutation({
     onSuccess: () => {
-      utils.invalidateQueries();
+      console.log("success");
+      utils.tickets.getByDate.invalidate();
     },
   });
 

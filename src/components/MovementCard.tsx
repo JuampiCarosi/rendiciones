@@ -17,11 +17,11 @@ const MovementCard = ({ movement }: MovementCardProps) => {
   const expenseColor =
     movement.fromUser === session?.user?.id ? "bg-red-200 text-red-800" : "bg-green-200 text-green-800";
   const movementPreposition = movement.fromUser === session?.user?.id ? "Para" : "De";
-  const { data: movementUser } = trpc.proxy.users.getById.useQuery(movement.fromUser);
+  const { data: movementUser } = trpc.users.getById.useQuery(movement.fromUser);
 
   return (
     <div className=" p-2">
-      <div className=" flex flex-col items-start gap-1 rounded-lg border	bg-gray-50 p-4 text-center	shadow-sm">
+      <div className=" flex flex-col items-start gap-1 rounded-lg border	bg-gray-50 p-4 shadow-sm">
         <div className=" w-full overflow-hidden text-ellipsis whitespace-nowrap	pb-1 text-lg font-semibold">
           <span>{`${movementPreposition}: ${movementUser?.name}`}</span>
         </div>

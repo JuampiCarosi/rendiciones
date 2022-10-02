@@ -15,7 +15,7 @@ const errorMessages = {
 
 type Path = keyof typeof errorMessages;
 
-export const t = initTRPC<{ ctx: Context }>()({
+export const t = initTRPC.context<Context>().create({
   transformer: superjson,
   errorFormatter({ shape, error }) {
     let customErrorMessage = "";
