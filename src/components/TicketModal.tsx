@@ -62,8 +62,7 @@ const InvoiceModal = ({ handleShow, show }: Props) => {
   });
 
   const mutation = trpc.tickets.createTicket.useMutation({
-    onSuccess: () => {
-      console.log("success");
+    onSuccess() {
       utils.tickets.getByDate.invalidate();
     },
   });

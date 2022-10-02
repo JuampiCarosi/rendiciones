@@ -79,8 +79,7 @@ const EditTicketModal = ({
   });
 
   const mutation = trpc.tickets.editTicket.useMutation({
-    onSuccess: () => {
-      console.log("success");
+    onSuccess() {
       utils.tickets.getByDate.invalidate();
     },
   });
@@ -168,7 +167,7 @@ const EditTicketModal = ({
                   label="Fecha del ticket"
                   type="date"
                   name="invoiceDate"
-                  value={invoiceDate.toLocaleDateString()}
+                  value={invoiceDate.toLocaleDateString("en-CA")}
                 />
 
                 <SelectInput
