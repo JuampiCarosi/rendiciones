@@ -1,6 +1,5 @@
 import { Transition } from "@headlessui/react";
 import { Fragment } from "react";
-import Button from "./Button";
 
 type Props = {
   handleShow: (show: boolean) => void;
@@ -27,15 +26,24 @@ const ConfirmModal = ({ show, handleShow, title, message, onConfirm }: Props) =>
         <div onClick={() => handleShow(false)} className="fixed inset-0 z-50 overflow-y-auto">
           <div className="flex min-h-screen items-center justify-center sm:block sm:p-0">
             <div className="fixed top-[50%] left-[50%] z-50 w-[95vw] max-w-md -translate-x-[50%] -translate-y-[50%] overflow-hidden rounded-lg bg-white px-5 py-6 shadow-xl transition-all focus:outline-none focus-visible:ring focus-visible:ring-purple-500 focus-visible:ring-opacity-75 sm:my-8 sm:w-full sm:max-w-lg sm:align-middle md:w-full">
-              <h2 className="text-md font-medium leading-6 text-gray-900">{title}</h2>
+              <h2 className="text-md mb-2 font-medium leading-6 text-gray-900">{title}</h2>
               <span className="leading-6 text-gray-700">{message}</span>
-              <div className="grid grid-cols-2 gap-2 pt-4">
-                <Button label="Confirmar" className=" w-full" onClick={() => onConfirm()} />
-                <Button
-                  label="Cancelar"
-                  className=" m-auto w-full bg-red-600"
+
+              <div className="flex gap-2 pt-4 sm:justify-end">
+                <button
+                  type="button"
+                  onClick={() => onConfirm()}
+                  className="inline-flex w-full justify-center rounded-md border border-gray-300 bg-gray-200 px-4 py-2 text-base  font-medium text-gray-500  shadow-sm hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-2 sm:mt-0 sm:w-auto sm:text-sm"
+                >
+                  Confirmar
+                </button>
+                <button
+                  type="button"
                   onClick={() => handleShow(false)}
-                />
+                  className="inline-flex w-full justify-center rounded-md border border-red-700 bg-red-600 px-4 py-2 text-base  font-medium text-white  shadow-sm hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-2 sm:mt-0 sm:w-auto sm:text-sm"
+                >
+                  Cancelar
+                </button>
               </div>
             </div>
           </div>
