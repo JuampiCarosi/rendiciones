@@ -7,9 +7,10 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import Button from "./Button";
 import ConfirmModal from "./ConfirmModal";
+import toast, { Toaster } from "react-hot-toast";
 
-export const ticketParamsVal = z.object({
-  amount: z.number().min(1),
+const ticketParamsVal = z.object({
+  amount: z.number().positive(),
   description: z.string().min(1),
   invoiceDate: z.date(),
   expenseType: z.string().min(1),
@@ -72,6 +73,7 @@ const EditTicketModal = ({
 }: Props) => {
   const utils = trpc.useContext();
   const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const deletedTicketToast = () => toast.success("Ticket eliminado correctamente.");
 
   const handleShowConfirmModal = (show: boolean) => {
     setShowConfirmModal(show);
@@ -83,18 +85,27 @@ const EditTicketModal = ({
     formState,
   } = useForm({
     resolver: zodResolver(ticketParamsVal),
+    shouldUnregister: true,
   });
 
-  const mutation = trpc.tickets.editTicket.useMutation({
+  const editTicketMutation = trpc.tickets.editTicket.useMutation({
     onSuccess() {
       utils.tickets.getByDate.invalidate();
       utils.balances.getBalance.invalidate();
     },
   });
 
+  const deleteTicketMutation = trpc.tickets.deleteTicket.useMutation({
+    onSuccess() {
+      utils.tickets.getByDate.invalidate();
+      utils.balances.getBalance.invalidate();
+      deletedTicketToast();
+    },
+  });
+
   const onSubmit = handleSubmitVal((props) => {
     const { amount, description, invoiceDate, invoiceType, expenseType, costCenter } = props;
-    mutation.mutate({
+    editTicketMutation.mutate({
       amount: Number(amount),
       description,
       invoiceDate: new Date(invoiceDate),
@@ -110,16 +121,18 @@ const EditTicketModal = ({
   const clientErrorMessageArray = errorMessageKeys.map((key) => {
     return `El campo  ${errorMessages[key]} es requerido`;
   });
-  const errorMessage = clientErrorMessageArray.join("\n") || mutation.error?.shape?.customErrorMessage;
+  const errorMessage =
+    clientErrorMessageArray.join("\n") || editTicketMutation.error?.shape?.customErrorMessage;
 
   return (
     <>
+      <Toaster position="top-center" reverseOrder={false} />
       <ConfirmModal
         show={showConfirmModal}
         handleShow={handleShowConfirmModal}
         title="Eliminar Ticket"
         message={"Estas seguro que queres eliminar el ticket? " + "\n" + " Esta accion no se puede deshacer!"}
-        onConfirm={() => alert("Ticket eliminado!")}
+        onConfirm={() => deleteTicketMutation.mutate(id)}
       />
       {show && <div className="fixed inset-0 z-20 bg-black/30 transition-opacity" aria-hidden="true"></div>}
       <Transition

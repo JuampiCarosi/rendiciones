@@ -5,9 +5,7 @@ const Button: ({}: ButtonProps) => JSX.Element = ({ label, Icon, style, onClick,
     <div>
       <button
         style={style}
-        className={
-          "flex h-10 items-center justify-center rounded-lg bg-slate-500 px-2 text-white " + className
-        }
+        className={`flex h-10 items-center justify-center rounded-lg bg-slate-500 px-2 text-white ${className}`}
         onClick={() => onClick()}
       >
         {Icon && <Icon />}

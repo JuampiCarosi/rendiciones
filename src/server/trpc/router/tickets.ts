@@ -85,4 +85,11 @@ export const ticketsRouter = t.router({
       },
     });
   }),
+  deleteTicket: t.procedure.input(z.string()).mutation(async ({ input, ctx }) => {
+    await ctx.prisma.ticket.delete({
+      where: {
+        id: input,
+      },
+    });
+  }),
 });
