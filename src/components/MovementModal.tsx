@@ -54,6 +54,7 @@ const EntryModal = ({ handleShow, show }: Props) => {
   const mutation = trpc.movements.createMovement.useMutation({
     onSuccess() {
       utils.movements.getByDate.invalidate();
+      utils.balances.getBalance.invalidate();
     },
   });
 
