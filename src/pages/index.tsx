@@ -51,27 +51,29 @@ const Home: NextPage = () => {
   return (
     <div className="flex h-full flex-col">
       <Top setPettyCash={updateCurrentPettyCash} />
-      <TicketModal show={showTicketModal} handleShow={handleShowTicketModal} />
-      <EntryModal show={showEntryModal} handleShow={handleShowEntryModal} />
-      {currentTicket && (
-        <EditTicketModal
-          show={showEditTicketModal}
-          handleShow={handleShowEditTicketModal}
-          {...currentTicket}
-        />
-      )}
       <div className="w-full grow overflow-scroll pt-2">
-        <div className="h-12"></div>
-        {tickets?.length === 0 && movements?.length === 0 && (
-          <div className="flex justify-center py-3">
-            <h3 className=" text-slate-400">No hay movimientos en esta caja</h3>
-          </div>
-        )}
-        {tickets &&
-          tickets.map((ticket, i) => (
-            <TicketCard key={i} ticket={ticket} onClick={() => handleEditTicket(ticket)} />
-          ))}
-        {movements && movements.map((movement, i) => <MovementCard key={i} movement={movement} />)}
+        <div className="m-auto max-w-lg">
+          <TicketModal show={showTicketModal} handleShow={handleShowTicketModal} />
+          <EntryModal show={showEntryModal} handleShow={handleShowEntryModal} />
+          {currentTicket && (
+            <EditTicketModal
+              show={showEditTicketModal}
+              handleShow={handleShowEditTicketModal}
+              {...currentTicket}
+            />
+          )}
+          <div className="h-12"></div>
+          {tickets?.length === 0 && movements?.length === 0 && (
+            <div className="flex justify-center py-3">
+              <h3 className=" text-slate-400">No hay movimientos en esta caja</h3>
+            </div>
+          )}
+          {tickets &&
+            tickets.map((ticket, i) => (
+              <TicketCard key={i} ticket={ticket} onClick={() => handleEditTicket(ticket)} />
+            ))}
+          {movements && movements.map((movement, i) => <MovementCard key={i} movement={movement} />)}
+        </div>
       </div>
       <Bottom handleShowEntryModal={handleShowEntryModal} handleShowTicketModal={handleShowTicketModal} />
     </div>
