@@ -29,7 +29,11 @@ const MovementCard = ({ movement }: MovementCardProps) => {
           <span className={`w-fit rounded-full ${expenseColor} px-2 py-1 text-sm font-bold ${expenseColor}`}>
             {expenseType}
           </span>
-          <span>{movement.description}</span>
+          <div className="flex w-36 justify-around ">
+            <span className="w-full overflow-hidden text-ellipsis whitespace-nowrap text-center">
+              {movement.description}
+            </span>
+          </div>
           <span>$ {formatoPesos.format(movement.amount)}</span>
         </div>
       </div>
