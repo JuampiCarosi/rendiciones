@@ -6,7 +6,6 @@ import { Dialog, Transition } from "@headlessui/react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import toast, { Toaster } from "react-hot-toast";
-import { Ticket } from "@prisma/client";
 
 export const ticketParamsVal = z.object({
   amount: z.number().min(1),
@@ -54,10 +53,8 @@ type Props = {
 
 const InvoiceModal = ({ handleShow, show }: Props) => {
   const utils = trpc.useContext();
-  const uploadedTicketToast = (ticketId?: number) =>
-    ticketId
-      ? toast.success(`El numero de ticket es ${ticketId}`, { duration: 7000 })
-      : toast.error("Error al subir el ticket");
+  const uploadedTicketToast = (ticketId: number) =>
+    toast.success(`El numero de ticket es ${ticketId}`, { duration: 7000 });
 
   const {
     register,
@@ -69,9 +66,13 @@ const InvoiceModal = ({ handleShow, show }: Props) => {
   });
 
   const mutation = trpc.tickets.createTicket.useMutation({
-    onSuccess() {
+    onSuccess(ticket) {
+      uploadedTicketToast(ticket.ticketId);
       utils.tickets.getByDate.invalidate();
       utils.balances.getBalance.invalidate();
+    },
+    onError() {
+      toast.error("Error al subir el ticket");
     },
   });
 
@@ -90,7 +91,6 @@ const InvoiceModal = ({ handleShow, show }: Props) => {
       expenseType,
       costCenter,
     });
-    uploadedTicketToast(mutation.data?.ticketId);
     handleClose();
   });
 
