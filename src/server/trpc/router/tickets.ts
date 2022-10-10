@@ -61,7 +61,7 @@ export const ticketsRouter = t.router({
   getByDate: t.procedure.input(z.date()).query(async ({ ctx, input }) => {
     return ctx.prisma.ticket.findMany({
       where: {
-        pettyCashDate: input,
+        pettyCashDate: getNextWednesday(input),
         userId: ctx.session?.user?.id,
       },
       orderBy: {

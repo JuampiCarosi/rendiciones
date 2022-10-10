@@ -3,7 +3,7 @@ import { unstable_getServerSession } from "next-auth";
 import { authOptions } from "./api/auth/[...nextauth]";
 import Top from "../components/Top";
 import TicketModal from "../components/TicketModal";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 import EntryModal from "../components/MovementModal";
 import { trpc } from "../utils/trpc";
@@ -12,21 +12,18 @@ import MovementCard from "../components/MovementCard";
 import Bottom from "../components/Bottom";
 import EditTicketModal from "../components/EditTicketModal";
 import { Ticket } from "@prisma/client";
+import { getNextWednesday } from "../utils/helpers";
 
 const Home: NextPage = () => {
   const [showTicketModal, setShowTicketModal] = useState(false);
   const [showEntryModal, setShowEntryModal] = useState(false);
-  const [currentPettyCash, setCurrentPettyCash] = useState<Date>();
+  const [currentPettyCash, setCurrentPettyCash] = useState<Date>(getNextWednesday(new Date()));
   const [showEditTicketModal, setShowEditTicketModal] = useState(false);
   const [currentTicket, setCurrentTicket] = useState<Ticket>();
+  const utils = trpc.useContext();
 
-  const { data: movements } = trpc.movements.getByDate.useQuery(currentPettyCash || new Date());
-  const { data: pettyCash } = trpc.tickets.getCurrentPettyCash.useQuery();
-  const { data: tickets } = trpc.tickets.getByDate.useQuery(currentPettyCash || new Date());
-
-  useEffect(() => {
-    if (pettyCash) setCurrentPettyCash(pettyCash.date);
-  }, [pettyCash]);
+  const { data: movements } = trpc.movements.getByDate.useQuery(currentPettyCash);
+  const { data: tickets } = trpc.tickets.getByDate.useQuery(currentPettyCash);
 
   const handleShowTicketModal = (value: boolean) => {
     setShowTicketModal(value);
@@ -45,9 +42,15 @@ const Home: NextPage = () => {
     setCurrentTicket(ticket);
   };
 
+  const updateCurrentPettyCash = (date: Date) => {
+    setCurrentPettyCash(date);
+    utils.tickets.getByDate.invalidate();
+    utils.movements.getByDate.invalidate();
+  };
+
   return (
     <div className="flex h-full flex-col">
-      <Top setPettyCash={setCurrentPettyCash} />
+      <Top setPettyCash={updateCurrentPettyCash} />
       <TicketModal show={showTicketModal} handleShow={handleShowTicketModal} />
       <EntryModal show={showEntryModal} handleShow={handleShowEntryModal} />
       {currentTicket && (
