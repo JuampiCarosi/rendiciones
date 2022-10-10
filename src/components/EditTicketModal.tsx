@@ -137,7 +137,11 @@ const EditTicketModal = ({
         handleShow={handleShowConfirmModal}
         title="Eliminar Ticket"
         message={"Estas seguro que queres eliminar el ticket? " + "\n" + " Esta accion no se puede deshacer!"}
-        onConfirm={() => deleteTicketMutation.mutate(id)}
+        onConfirm={() => {
+          handleShow(false);
+          handleShowConfirmModal(false);
+          deleteTicketMutation.mutate(id);
+        }}
       />
       {show && <div className="fixed inset-0 z-20 bg-black/30 transition-opacity" aria-hidden="true"></div>}
       <Transition
