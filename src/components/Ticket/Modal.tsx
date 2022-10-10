@@ -57,6 +57,7 @@ const InvoiceModal = ({ handleShow, show }: Props) => {
     register,
     handleSubmit: handleSubmitVal,
     formState,
+    reset,
   } = useForm({
     resolver: zodResolver(ticketParamsVal),
   });
@@ -68,6 +69,11 @@ const InvoiceModal = ({ handleShow, show }: Props) => {
     },
   });
 
+  const handleClose = () => {
+    handleShow(false);
+    reset();
+  };
+
   const onSubmit = handleSubmitVal((props) => {
     const { amount, description, invoiceDate, invoiceType, expenseType, costCenter } = props;
     mutation.mutate({
@@ -78,7 +84,7 @@ const InvoiceModal = ({ handleShow, show }: Props) => {
       expenseType,
       costCenter,
     });
-    handleShow(false);
+    handleClose();
   });
 
   const errorMessageKeys = Object.keys(formState.errors) as ErrorMessageKeys[];
@@ -100,7 +106,7 @@ const InvoiceModal = ({ handleShow, show }: Props) => {
         show={show}
         as={Fragment}
       >
-        <Dialog onClose={() => handleShow(false)} className="fixed inset-0 z-30 overflow-y-auto">
+        <Dialog onClose={() => handleClose()} className="fixed inset-0 z-30 overflow-y-auto">
           <div className="flex min-h-screen items-center justify-center sm:block sm:p-0">
             <Dialog.Panel
               className="fixed top-[50%] left-[50%] z-50 w-[95vw] max-w-md -translate-x-[50%] -translate-y-[50%] overflow-hidden rounded-lg bg-white px-5 py-6 shadow-xl transition-all focus:outline-none focus-visible:ring focus-visible:ring-purple-500 focus-visible:ring-opacity-75 sm:my-8 sm:w-full sm:max-w-lg sm:align-middle md:w-full"
@@ -151,7 +157,7 @@ const InvoiceModal = ({ handleShow, show }: Props) => {
                 <div className="flex gap-2 pt-4 sm:justify-end">
                   <button
                     type="button"
-                    onClick={() => handleShow(false)}
+                    onClick={() => handleClose()}
                     className="inline-flex w-full justify-center rounded-md border border-gray-300 bg-gray-200 px-4 py-2 text-base  font-medium text-gray-500  shadow-sm hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-2 sm:mt-0 sm:w-auto sm:text-sm"
                   >
                     Cerrar
