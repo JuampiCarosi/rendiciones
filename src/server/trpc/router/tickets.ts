@@ -1,6 +1,6 @@
 import { t } from "../trpc";
 import { ticketParamsVal } from "../../../shared/types";
-import { getNextWednesday, parsePettyCashDate } from "../../../utils/helpers";
+import { getNextWednesday } from "../../../utils/helpers";
 import { z } from "zod";
 
 const editTicketsVal = ticketParamsVal.extend({
@@ -25,41 +25,6 @@ export const ticketsRouter = t.router({
         pettyCashDate: getNextWednesday(new Date()),
       },
     });
-  }),
-  getPettyCashDates: t.procedure.query(async ({ ctx }) => {
-    const currentPettyCashDate = getNextWednesday(new Date());
-    const pettyCashDates = await ctx.prisma.ticket.findMany({
-      where: {
-        userId: ctx.session?.user?.id,
-      },
-      orderBy: {
-        pettyCashDate: "desc",
-      },
-      distinct: ["pettyCashDate"],
-    });
-    const parsedPettyCashDates = pettyCashDates.map((ticket) => {
-      return parsePettyCashDate(ticket.pettyCashDate);
-    });
-    if (!parsedPettyCashDates?.some((item) => item.date.getTime() === currentPettyCashDate.getTime())) {
-      parsedPettyCashDates.unshift(parsePettyCashDate(currentPettyCashDate));
-    }
-    if (parsedPettyCashDates.length > 5) {
-      return parsedPettyCashDates.slice(0, 5);
-    }
-    return parsedPettyCashDates;
-  }),
-  getCurrentPettyCash: t.procedure.query(async ({ ctx }) => {
-    const ticket = await ctx.prisma.ticket.findFirst({
-      where: {
-        userId: ctx.session?.user?.id,
-      },
-      orderBy: {
-        pettyCashDate: "desc",
-      },
-      distinct: ["pettyCashDate"],
-    });
-    if (!ticket) return { date: new Date(), label: "No hay cajas" };
-    return parsePettyCashDate(ticket.pettyCashDate);
   }),
   getByDate: t.procedure.input(z.date()).query(async ({ ctx, input }) => {
     return ctx.prisma.ticket.findMany({

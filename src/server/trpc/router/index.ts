@@ -6,6 +6,7 @@ import { ticketsRouter } from "./tickets";
 import { usersRouter } from "./users";
 import { movementsRouter } from "./movements";
 import { balancesRouter } from "./balances";
+import { pettyCashRouter } from "./pettyCash";
 
 export const appRouter = t.router({
   example: exampleRouter,
@@ -14,6 +15,7 @@ export const appRouter = t.router({
   users: usersRouter,
   movements: movementsRouter,
   balances: balancesRouter,
+  pettyCash: pettyCashRouter,
 });
 
 // export type definition of API

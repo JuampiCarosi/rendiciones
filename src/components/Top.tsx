@@ -14,7 +14,7 @@ const Top = ({ setPettyCash }: Props) => {
   const { data: balance } = trpc.balances.getBalance.useQuery();
   const formatoPesos = new Intl.NumberFormat("es-AR");
 
-  const { data: pettyCashDates } = trpc.tickets.getPettyCashDates.useQuery();
+  const { data: pettyCashDates } = trpc.pettyCash.getDates.useQuery();
 
   return (
     <div className="absolute flex h-12 w-full items-center justify-between gap-4 bg-white px-4 text-slate-600  shadow-md shadow-slate-200">
