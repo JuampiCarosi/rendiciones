@@ -73,10 +73,13 @@ const EditTicketModal = ({
 }: Props) => {
   const utils = trpc.useContext();
   const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
   const deletedTicketToast = () => toast.success("Ticket eliminado correctamente.");
+  console.log(show);
 
   const handleShowConfirmModal = (show: boolean) => {
     setShowConfirmModal(show);
+    setIsEditing(false);
   };
 
   const {
@@ -92,6 +95,7 @@ const EditTicketModal = ({
     onSuccess() {
       utils.tickets.getByDate.invalidate();
       utils.balances.getBalance.invalidate();
+      setIsEditing(false);
     },
   });
 
@@ -100,6 +104,7 @@ const EditTicketModal = ({
       utils.tickets.getByDate.invalidate();
       utils.balances.getBalance.invalidate();
       deletedTicketToast();
+      setIsEditing(false);
     },
   });
 
@@ -115,6 +120,7 @@ const EditTicketModal = ({
       id,
     });
     handleShow(false);
+    setIsEditing(false);
   });
 
   const errorMessageKeys = Object.keys(formState.errors) as ErrorMessageKeys[];
@@ -145,7 +151,13 @@ const EditTicketModal = ({
         show={show}
         as={Fragment}
       >
-        <Dialog onClose={() => handleShow(false)} className="fixed inset-0 z-30 overflow-y-auto">
+        <Dialog
+          onClose={() => {
+            handleShow(false);
+            setIsEditing(false);
+          }}
+          className="fixed inset-0 z-30 overflow-y-auto"
+        >
           <div className="flex min-h-screen items-center justify-center sm:block sm:p-0">
             <Dialog.Panel
               className="fixed top-[50%] left-[50%] z-50 w-[95vw] max-w-md -translate-x-[50%] -translate-y-[50%] overflow-hidden rounded-lg bg-white px-5 py-6 shadow-xl transition-all focus:outline-none focus-visible:ring focus-visible:ring-purple-500 focus-visible:ring-opacity-75 sm:my-8 sm:w-full sm:max-w-lg sm:align-middle md:w-full"
@@ -158,11 +170,15 @@ const EditTicketModal = ({
                   <Dialog.Title className="text-md font-medium leading-6 text-gray-900">
                     Editar ticket
                   </Dialog.Title>
-                  <Button
-                    label="Eliminar"
-                    className="bg-red-600 px-4"
-                    onClick={() => setShowConfirmModal(true)}
-                  />
+                  {isEditing ? (
+                    <Button
+                      label="Eliminar"
+                      className="bg-red-600 px-4"
+                      onClick={() => setShowConfirmModal(true)}
+                    />
+                  ) : (
+                    <Button label="Editar" className="bg-slate-500 px-4" onClick={() => setIsEditing(true)} />
+                  )}
                 </div>
                 {errorMessage && (
                   <div className="text-red-500" style={{ whiteSpace: "pre" }}>
@@ -178,6 +194,7 @@ const EditTicketModal = ({
                   name="invoiceType"
                   register={register}
                   value={invoiceType}
+                  disabled={!isEditing}
                   required
                 />
 
@@ -187,6 +204,7 @@ const EditTicketModal = ({
                   label="Descripcion"
                   name="description"
                   value={description}
+                  disabled={!isEditing}
                 />
                 <Input
                   register={register}
@@ -195,6 +213,7 @@ const EditTicketModal = ({
                   type="number"
                   name="amount"
                   value={amount.toString()}
+                  disabled={!isEditing}
                 />
                 <Input
                   register={register}
@@ -203,6 +222,7 @@ const EditTicketModal = ({
                   type="date"
                   name="invoiceDate"
                   value={invoiceDate.toLocaleDateString("en-CA")}
+                  disabled={!isEditing}
                 />
 
                 <SelectInput
@@ -212,6 +232,7 @@ const EditTicketModal = ({
                   register={register}
                   required
                   value={costCenter}
+                  disabled={!isEditing}
                 />
 
                 <SelectInput
@@ -221,12 +242,16 @@ const EditTicketModal = ({
                   register={register}
                   required
                   value={expenseType}
+                  disabled={!isEditing}
                 />
 
                 <div className="flex gap-2 pt-4 sm:justify-end">
                   <button
                     type="button"
-                    onClick={() => handleShow(false)}
+                    onClick={() => {
+                      handleShow(false);
+                      setIsEditing(false);
+                    }}
                     className="inline-flex w-full justify-center rounded-md border border-gray-300 bg-gray-200 px-4 py-2 text-base  font-medium text-gray-500  shadow-sm hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-2 sm:mt-0 sm:w-auto sm:text-sm"
                   >
                     Cerrar

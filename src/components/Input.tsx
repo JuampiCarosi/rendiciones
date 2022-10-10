@@ -4,6 +4,7 @@ import { FieldValues, UseFormRegister } from "react-hook-form";
 type InputProps = {
   type?: HTMLInputTypeAttribute;
   label?: string;
+  disabled?: boolean;
   style?: React.CSSProperties;
   placeholder?: string;
   children?: React.ReactNode;
@@ -28,7 +29,18 @@ type SelectInputProps = {
   emptyOption?: boolean;
 };
 const Input = (props: InputProps) => {
-  const { type = "text", label, name, style, placeholder, children, value, register, required } = props;
+  const {
+    type = "text",
+    label,
+    name,
+    style,
+    placeholder,
+    children,
+    value,
+    register,
+    required,
+    disabled,
+  } = props;
   if (!name) throw new Error("Input component needs a name prop");
 
   return (
@@ -40,6 +52,7 @@ const Input = (props: InputProps) => {
         {...register(name, { required, valueAsNumber: type === "number", valueAsDate: type === "date" })}
         defaultValue={value}
         placeholder={placeholder}
+        disabled={disabled}
         style={style}
         autoComplete="off"
       />
