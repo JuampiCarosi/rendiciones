@@ -22,8 +22,9 @@ const TicketCard = ({ ticket, onClick }: TicketCardProps) => {
   return (
     <div onClick={onClick} className=" p-2">
       <div className=" flex flex-col items-start gap-1 rounded-lg	border bg-gray-50 p-4 shadow-sm">
-        <div className=" w-full overflow-hidden text-ellipsis whitespace-nowrap	pb-1 text-lg font-semibold">
-          <span>{ticket.description}</span>
+        <div className="flex w-full justify-between overflow-hidden text-ellipsis whitespace-nowrap	pb-1 ">
+          <span className="text-lg font-semibold">{ticket.description}</span>
+          <span className="text-sm font-light"># {ticket.ticketId}</span>
         </div>
         <div className="flex w-full	justify-between ">
           <span
