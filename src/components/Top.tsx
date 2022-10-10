@@ -14,7 +14,7 @@ const Top = ({ setPettyCash }: Props) => {
   const { data: balance } = trpc.balances.getBalance.useQuery();
   const formatoPesos = new Intl.NumberFormat("es-AR");
 
-  const { data: pettyCasheDates } = trpc.tickets.getPettyCashDates.useQuery();
+  const { data: pettyCashDates } = trpc.tickets.getPettyCashDates.useQuery();
 
   return (
     <div className="absolute flex h-12 w-full items-center justify-between gap-4 bg-white px-4 text-slate-600  shadow-md shadow-slate-200">
@@ -22,8 +22,8 @@ const Top = ({ setPettyCash }: Props) => {
         onChange={(e) => setPettyCash(new Date(e.target.value))}
         className="rounded border-none text-lg outline-none focus:border-none focus:outline-none active:outline-none"
       >
-        {pettyCasheDates &&
-          pettyCasheDates.map((pettycash, i) => (
+        {pettyCashDates &&
+          pettyCashDates.map((pettycash, i) => (
             <option key={i} value={pettycash.date.toDateString()}>
               {pettycash.label}
             </option>
