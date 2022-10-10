@@ -75,7 +75,6 @@ const EditTicketModal = ({
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const deletedTicketToast = () => toast.success("Ticket eliminado correctamente.");
-  console.log(show);
 
   const handleShowConfirmModal = (show: boolean) => {
     setShowConfirmModal(show);
