@@ -1,90 +1,85 @@
-import Input, { SelectInput } from "./Input";
-import { useForm } from "react-hook-form";
-import { Fragment } from "react";
-import { trpc } from "../utils/trpc";
 import { Dialog, Transition } from "@headlessui/react";
-import { zodResolver } from "@hookform/resolvers/zod";
+import { trpc } from "../../utils/trpc";
+import { Fragment } from "react";
+import { useForm } from "react-hook-form";
+import Input, { SelectInput } from "../Input";
 import { z } from "zod";
-
-export const ticketParamsVal = z.object({
-  amount: z.number().min(1),
-  description: z.string().min(1),
-  invoiceDate: z.date(),
-  expenseType: z.string().min(1),
-  invoiceType: z.string().min(1),
-  costCenter: z.string().min(1),
-});
-
-const invoiceTypes = [
-  { value: "a", label: "A" },
-  { value: "b", label: "B" },
-  { value: "c", label: "C" },
-];
-
-const expenseTypes = [
-  { value: "combustible", label: "Combustible" },
-  { value: "viaticos", label: "Viaticos" },
-  { value: "peajes", label: "Peajes" },
-  { value: "otros", label: "Otros" },
-];
-
-const costCenterTypes = [
-  { value: "gra", label: "GRA" },
-  { value: "gsp", label: "GSP" },
-  { value: "picc", label: "PICC" },
-];
-
-const errorMessages = {
-  invoiceType: "tipo de factura",
-  description: "descripción",
-  amount: "monto",
-  invoiceDate: "fecha del ticket",
-  costCenter: "centro de costos",
-  expenseType: "tipo de gasto",
-};
-
-type ErrorMessageKeys = keyof typeof errorMessages;
+import { zodResolver } from "@hookform/resolvers/zod";
 
 type Props = {
   handleShow: (show: boolean) => void;
   show: boolean;
 };
 
-const InvoiceModal = ({ handleShow, show }: Props) => {
+export const entryParamsVal = z.object({
+  amount: z.number().min(1),
+  description: z.string().min(1),
+  fromUser: z.string().min(1),
+  toUser: z.string().min(1),
+});
+
+const errorMessages = {
+  description: "descripción",
+  amount: "monto",
+  fromUser: "usuario origen",
+  toUser: "usuario destino",
+};
+
+type ErrorMessageKeys = keyof typeof errorMessages;
+
+const EntryModal = ({ handleShow, show }: Props) => {
   const utils = trpc.useContext();
 
   const {
     register,
     handleSubmit: handleSubmitVal,
     formState,
+    reset,
   } = useForm({
-    resolver: zodResolver(ticketParamsVal),
+    resolver: zodResolver(entryParamsVal),
   });
 
-  const mutation = trpc.tickets.createTicket.useMutation({
+  const users = trpc.users.getAll.useQuery();
+  const usersData =
+    users.data?.map((user) => {
+      return { value: user.value || "", label: user.label || "" };
+    }) || [];
+
+  const allowedUsers = trpc.users.getAllowedTransfers.useQuery();
+  const allowedUsersData =
+    allowedUsers.data?.map((user) => {
+      return { value: user.value || "", label: user.label || "" };
+    }) || [];
+
+  const mutation = trpc.movements.createMovement.useMutation({
     onSuccess() {
-      utils.tickets.getByDate.invalidate();
+      utils.movements.getByDate.invalidate();
       utils.balances.getBalance.invalidate();
     },
   });
 
-  const onSubmit = handleSubmitVal((props) => {
-    const { amount, description, invoiceDate, invoiceType, expenseType, costCenter } = props;
-    mutation.mutate({
-      amount: Number(amount),
-      description,
-      invoiceDate: new Date(invoiceDate),
-      invoiceType,
-      expenseType,
-      costCenter,
-    });
+  const handleClose = () => {
     handleShow(false);
+    reset();
+  };
+
+  const onSubmit = handleSubmitVal((props) => {
+    const { fromUser, toUser, amount, description } = props;
+    mutation.mutate({
+      fromUser,
+      toUser,
+      amount,
+      description,
+      date: new Date(),
+    });
+    handleClose();
   });
 
   const errorMessageKeys = Object.keys(formState.errors) as ErrorMessageKeys[];
   const clientErrorMessageArray = errorMessageKeys.map((key) => {
     return `El campo  ${errorMessages[key]} es requerido`;
   });
+
   const errorMessage = clientErrorMessageArray.join("\n") || mutation.error?.shape?.customErrorMessage;
 
   return (
@@ -121,43 +116,33 @@ const InvoiceModal = ({ handleShow, show }: Props) => {
 
               <form onSubmit={onSubmit} className="grid gap-2">
                 <SelectInput
-                  label="Tipo de Factura"
-                  data={invoiceTypes}
-                  name="invoiceType"
+                  label="De usuario"
+                  data={allowedUsersData}
+                  name="fromUser"
                   register={register}
                   required
                 />
-
+                <SelectInput
+                  label="Para usuario"
+                  data={usersData}
+                  name="toUser"
+                  register={register}
+                  required
+                />
                 <Input register={register} required label="Descripcion" name="description" />
                 <Input register={register} required label="Monto" type="number" name="amount" />
-                <Input register={register} required label="Fecha del ticket" type="date" name="invoiceDate" />
-
-                <SelectInput
-                  label="Centro de costos"
-                  data={costCenterTypes}
-                  name="costCenter"
-                  register={register}
-                  required
-                />
-
-                <SelectInput
-                  label="Tipo de gasto"
-                  data={expenseTypes}
-                  name="expenseType"
-                  register={register}
-                  required
-                />
 
                 <div className="flex gap-2 pt-4 sm:justify-end">
                   <button
                     type="button"
-                    onClick={() => handleShow(false)}
+                    onClick={handleClose}
                     className="inline-flex w-full justify-center rounded-md border border-gray-300 bg-gray-200 px-4 py-2 text-base  font-medium text-gray-500  shadow-sm hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-2 sm:mt-0 sm:w-auto sm:text-sm"
                   >
                     Cerrar
                   </button>
                   <input
                     type="submit"
+                    value="Agregar"
                     className="inline-flex w-full justify-center rounded-md border border-indigo-600 bg-indigo-600 px-4 py-2  text-base font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 sm:mt-0 sm:w-auto sm:text-sm"
                   />
                 </div>
@@ -170,4 +155,4 @@ const InvoiceModal = ({ handleShow, show }: Props) => {
   );
 };
 
-export default InvoiceModal;
+export default EntryModal;

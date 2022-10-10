@@ -1,6 +1,6 @@
 import { Ticket } from "@prisma/client";
 import React from "react";
-import { expenseTypes } from "../shared/types";
+import { expenseTypes } from "../../shared/types";
 
 type TicketCardProps = {
   ticket: Ticket;

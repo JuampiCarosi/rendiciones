@@ -2,15 +2,15 @@ import type { GetServerSideProps, NextPage } from "next";
 import { unstable_getServerSession } from "next-auth";
 import { authOptions } from "./api/auth/[...nextauth]";
 import Top from "../components/Top";
-import TicketModal from "../components/TicketModal";
+import TicketModal from "../components/Ticket/Modal";
 import { useState } from "react";
 
-import EntryModal from "../components/MovementModal";
+import EntryModal from "../components/Movement/Modal";
 import { trpc } from "../utils/trpc";
-import TicketCard from "../components/TicketCard";
-import MovementCard from "../components/MovementCard";
+import TicketCard from "../components/Ticket/Card";
+import MovementCard from "../components/Movement/Card";
 import Bottom from "../components/Bottom";
-import EditTicketModal from "../components/EditTicketModal";
+import EditTicketModal from "../components/Ticket/EditModal";
 import { Ticket } from "@prisma/client";
 import { getNextWednesday } from "../utils/helpers";
 

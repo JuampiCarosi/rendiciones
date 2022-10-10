@@ -1,12 +1,12 @@
-import Input, { SelectInput } from "./Input";
+import Input, { SelectInput } from "../Input";
 import { useForm } from "react-hook-form";
 import { Fragment, useState } from "react";
-import { trpc } from "../utils/trpc";
+import { trpc } from "../../utils/trpc";
 import { Dialog, Transition } from "@headlessui/react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import Button from "./Button";
-import ConfirmModal from "./ConfirmModal";
+import Button from "../Button";
+import ConfirmModal from "../ConfirmModal";
 import toast, { Toaster } from "react-hot-toast";
 
 const ticketParamsVal = z.object({
@@ -270,6 +270,7 @@ const EditTicketModal = ({
                   <input
                     type="submit"
                     disabled={!isEditing}
+                    value="Guardar"
                     className={`inline-flex w-full justify-center rounded-md border  ${
                       isEditing
                         ? "border-indigo-600 bg-indigo-600 hover:bg-indigo-700"
