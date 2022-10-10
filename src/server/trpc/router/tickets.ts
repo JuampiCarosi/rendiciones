@@ -27,6 +27,7 @@ export const ticketsRouter = t.router({
     });
   }),
   getPettyCashDates: t.procedure.query(async ({ ctx }) => {
+    const currentPettyCashDate = getNextWednesday(new Date());
     const pettyCashDates = await ctx.prisma.ticket.findMany({
       where: {
         userId: ctx.session?.user?.id,
@@ -36,10 +37,12 @@ export const ticketsRouter = t.router({
       },
       distinct: ["pettyCashDate"],
     });
-    if (pettyCashDates.length === 0) return [{ date: new Date(), label: "No hay cajas" }];
     const parsedPettyCashDates = pettyCashDates.map((ticket) => {
       return parsePettyCashDate(ticket.pettyCashDate);
     });
+    if (!parsedPettyCashDates?.some((item) => item.date.getTime() === currentPettyCashDate.getTime())) {
+      parsedPettyCashDates.unshift(parsePettyCashDate(currentPettyCashDate));
+    }
     if (parsedPettyCashDates.length > 5) {
       return parsedPettyCashDates.slice(0, 5);
     }

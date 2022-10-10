@@ -62,6 +62,11 @@ const Home: NextPage = () => {
       )}
       <div className="w-full grow overflow-scroll pt-2">
         <div className="h-12"></div>
+        {tickets?.length === 0 && movements?.length === 0 && (
+          <div className="flex justify-center py-3">
+            <h3 className=" text-slate-400">No hay movimientos en esta caja</h3>
+          </div>
+        )}
         {tickets &&
           tickets.map((ticket, i) => (
             <TicketCard key={i} ticket={ticket} onClick={() => handleEditTicket(ticket)} />
