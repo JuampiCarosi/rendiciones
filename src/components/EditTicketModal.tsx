@@ -85,6 +85,7 @@ const EditTicketModal = ({
     register,
     handleSubmit: handleSubmitVal,
     formState,
+    reset,
   } = useForm({
     resolver: zodResolver(ticketParamsVal),
     shouldUnregister: true,
@@ -180,7 +181,14 @@ const EditTicketModal = ({
                       onClick={() => setShowConfirmModal(true)}
                     />
                   ) : (
-                    <Button label="Editar" className="bg-slate-500 px-4" onClick={() => setIsEditing(true)} />
+                    <Button
+                      label="Editar"
+                      className="bg-slate-500 px-4"
+                      onClick={() => {
+                        setIsEditing(true);
+                        reset();
+                      }}
+                    />
                   )}
                 </div>
                 {errorMessage && (
@@ -261,7 +269,12 @@ const EditTicketModal = ({
                   </button>
                   <input
                     type="submit"
-                    className="inline-flex w-full justify-center rounded-md border border-indigo-600 bg-indigo-600 px-4 py-2  text-base font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 sm:mt-0 sm:w-auto sm:text-sm"
+                    disabled={!isEditing}
+                    className={`inline-flex w-full justify-center rounded-md border  ${
+                      isEditing
+                        ? "border-indigo-600 bg-indigo-600 hover:bg-indigo-700"
+                        : "border-indigo-400 bg-indigo-400"
+                    } px-4 py-2  text-base font-medium text-white shadow-sm  focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 sm:mt-0 sm:w-auto sm:text-sm`}
                   />
                 </div>
               </form>
