@@ -1,6 +1,6 @@
-import Input, { SelectInput } from "../Input";
+import Input, { MultipleSelectInput, SelectInput } from "../Input";
 import { useForm } from "react-hook-form";
-import { Fragment } from "react";
+import { Fragment, useState } from "react";
 import { trpc } from "../../utils/trpc";
 import { Dialog, Transition } from "@headlessui/react";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -13,7 +13,6 @@ export const ticketParamsVal = z.object({
   invoiceDate: z.date(),
   expenseType: z.string().min(1),
   invoiceType: z.string().min(1),
-  costCenter: z.string().min(1),
 });
 
 const invoiceTypes = [
@@ -30,9 +29,9 @@ const expenseTypes = [
 ];
 
 const costCenterTypes = [
-  { value: "gra", label: "GRA" },
-  { value: "gsp", label: "GSP" },
-  { value: "picc", label: "PICC" },
+  { id: "gra", name: "GRA" },
+  { id: "gsp", name: "GSP" },
+  { id: "picc", name: "PICC" },
 ];
 
 const errorMessages = {
@@ -53,6 +52,7 @@ type Props = {
 
 const InvoiceModal = ({ handleShow, show }: Props) => {
   const utils = trpc.useContext();
+  const [selectedCostCenters, setSelectedCostCenter] = useState<{ id: string; name: string }[]>([]);
   const uploadedTicketToast = (ticketId: number) =>
     toast.success(`El numero de ticket es ${ticketId}`, { duration: 7000 });
 
@@ -82,16 +82,17 @@ const InvoiceModal = ({ handleShow, show }: Props) => {
   };
 
   const onSubmit = handleSubmitVal((props) => {
-    const { amount, description, invoiceDate, invoiceType, expenseType, costCenter } = props;
+    const { amount, description, invoiceDate, invoiceType, expenseType } = props;
     mutation.mutate({
       amount: Number(amount),
       description,
       invoiceDate: new Date(invoiceDate),
       invoiceType,
       expenseType,
-      costCenter,
+      costCenter: JSON.stringify(selectedCostCenters.map((center) => center.id)),
     });
     handleClose();
+    setSelectedCostCenter([]);
   });
 
   const errorMessageKeys = Object.keys(formState.errors) as ErrorMessageKeys[];
@@ -146,13 +147,14 @@ const InvoiceModal = ({ handleShow, show }: Props) => {
                 <Input register={register} required label="Monto" type="number" name="amount" />
                 <Input register={register} required label="Fecha del ticket" type="date" name="invoiceDate" />
 
-                <SelectInput
+                <MultipleSelectInput
                   label="Centro de costos"
                   data={costCenterTypes}
                   name="costCenter"
-                  register={register}
-                  required
+                  selectedItems={selectedCostCenters}
+                  setSelectedItems={setSelectedCostCenter}
                 />
+                {/* <Example /> */}
 
                 <SelectInput
                   label="Tipo de gasto"
