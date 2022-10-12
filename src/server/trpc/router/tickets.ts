@@ -33,7 +33,7 @@ export const ticketsRouter = t.router({
         userId: ctx.session?.user?.id,
       },
       orderBy: {
-        pettyCashDate: "desc",
+        ticketId: "desc",
       },
     });
   }),

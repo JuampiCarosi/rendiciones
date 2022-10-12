@@ -17,7 +17,9 @@ const MovementCard = ({ movement }: MovementCardProps) => {
   const expenseColor =
     movement.fromUser === session?.user?.id ? "bg-red-200 text-red-800" : "bg-green-200 text-green-800";
   const movementPreposition = movement.fromUser === session?.user?.id ? "Para" : "De";
-  const { data: movementUser } = trpc.users.getById.useQuery(movement.fromUser);
+  const { data: movementUser } = trpc.users.getById.useQuery(
+    session?.user?.id ? movement.toUser : movement.fromUser
+  );
 
   return (
     <div className=" p-2">
