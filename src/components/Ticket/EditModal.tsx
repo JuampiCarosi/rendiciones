@@ -31,11 +31,7 @@ const expenseTypes = [
   { value: "otros", label: "Otros" },
 ];
 
-const costCenterTypes = [
-  { id: "gra", name: "GRA" },
-  { id: "gsp", name: "GSP" },
-  { id: "picc", name: "PICC" },
-];
+const costCenterTypes = ["GRA", "GSP", "PICC", "BOAT", "MIGUE", "AGPA", "LEON", "CAMP", "INCHU"];
 
 const errorMessages = {
   invoiceType: "tipo de factura",
@@ -75,7 +71,7 @@ const EditTicketModal = ({
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const deletedTicketToast = () => toast.success("Ticket eliminado correctamente.");
-  const [selectedCostCenters, setSelectedCostCenter] = useState<{ id: string; name: string }[]>([]);
+  const [selectedCostCenters, setSelectedCostCenter] = useState<string[]>([]);
 
   const handleShowConfirmModal = (show: boolean) => {
     setShowConfirmModal(show);

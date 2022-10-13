@@ -36,9 +36,9 @@ type MultipleSelectInputProps = {
   errMsg?: string;
   children?: React.ReactNode;
   name: string;
-  data: { id: string; name: string }[];
-  selectedItems: { id: string; name: string }[];
-  setSelectedItems: (items: { id: string; name: string }[]) => void;
+  data: string[];
+  selectedItems: string[];
+  setSelectedItems: (items: string[]) => void;
   disabled?: boolean;
 };
 
@@ -141,15 +141,15 @@ export const MultipleSelectInput = (props: MultipleSelectInputProps) => {
             disabled ? "bg-slate-100" : ""
           } font-light text-gray-800 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50`}
         >
-          {selectedItems.length > 0 ? selectedItems.map((item) => item.name).join(", ") : "------"}
+          {selectedItems.length > 0 ? selectedItems.map((item) => item).join(", ") : "------"}
         </Listbox.Button>
         <Listbox.Options className=" w-full overflow-auto rounded-md py-1 pl-3 text-sm text-base shadow-md ring-1 ring-black ring-opacity-5 focus:outline-none ">
           {data.map((item) => {
             return (
-              <Listbox.Option key={item.id} value={item}>
+              <Listbox.Option key={item} value={item}>
                 {({ selected }) => (
                   <div className="flex">
-                    <span className={`block truncate ${selected ? "font-semibold" : ""}`}>{item.name}</span>
+                    <span className={`block truncate ${selected ? "font-semibold" : ""}`}>{item}</span>
                   </div>
                 )}
               </Listbox.Option>

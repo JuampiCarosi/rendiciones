@@ -28,11 +28,7 @@ const expenseTypes = [
   { value: "otros", label: "Otros" },
 ];
 
-const costCenterTypes = [
-  { id: "gra", name: "GRA" },
-  { id: "gsp", name: "GSP" },
-  { id: "picc", name: "PICC" },
-];
+const costCenterTypes = ["GRA", "GSP", "PICC", "BOAT", "MIGUE", "AGPA", "LEON", "CAMP", "INCHU"];
 
 const errorMessages = {
   invoiceType: "tipo de factura",
@@ -52,7 +48,7 @@ type Props = {
 
 const InvoiceModal = ({ handleShow, show }: Props) => {
   const utils = trpc.useContext();
-  const [selectedCostCenters, setSelectedCostCenter] = useState<{ id: string; name: string }[]>([]);
+  const [selectedCostCenters, setSelectedCostCenter] = useState<string[]>([]);
   const uploadedTicketToast = (ticketId: number) =>
     toast.success(`El numero de ticket es ${ticketId}`, { duration: 7000 });
 
@@ -89,7 +85,7 @@ const InvoiceModal = ({ handleShow, show }: Props) => {
       invoiceDate: new Date(invoiceDate),
       invoiceType,
       expenseType,
-      costCenter: JSON.stringify(selectedCostCenters.map((center) => center.id)),
+      costCenter: JSON.stringify(selectedCostCenters),
     });
     handleClose();
     setSelectedCostCenter([]);
