@@ -134,7 +134,7 @@ export const MultipleSelectInput = (props: MultipleSelectInputProps) => {
 
   return (
     <div className="grid gap-1">
-      <Listbox value={selectedItems} onChange={setSelectedItems} multiple>
+      <Listbox disabled={disabled} value={selectedItems} onChange={setSelectedItems} multiple>
         <Listbox.Label className="text-sm text-gray-600">{label}</Listbox.Label>
         <Listbox.Button
           className={` h-10 rounded-lg border	border-gray-300 px-3 text-left ${

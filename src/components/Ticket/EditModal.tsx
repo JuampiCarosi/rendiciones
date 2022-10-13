@@ -1,4 +1,4 @@
-import Input, { SelectInput } from "../Input";
+import Input, { MultipleSelectInput, SelectInput } from "../Input";
 import { useForm } from "react-hook-form";
 import { Fragment, useState } from "react";
 import { trpc } from "../../utils/trpc";
@@ -32,9 +32,9 @@ const expenseTypes = [
 ];
 
 const costCenterTypes = [
-  { value: "gra", label: "GRA" },
-  { value: "gsp", label: "GSP" },
-  { value: "picc", label: "PICC" },
+  { id: "gra", name: "GRA" },
+  { id: "gsp", name: "GSP" },
+  { id: "picc", name: "PICC" },
 ];
 
 const errorMessages = {
@@ -75,6 +75,7 @@ const EditTicketModal = ({
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const deletedTicketToast = () => toast.success("Ticket eliminado correctamente.");
+  const [selectedCostCenters, setSelectedCostCenter] = useState<{ id: string; name: string }[]>([]);
 
   const handleShowConfirmModal = (show: boolean) => {
     setShowConfirmModal(show);
@@ -236,14 +237,13 @@ const EditTicketModal = ({
                   disabled={!isEditing}
                 />
 
-                <SelectInput
+                <MultipleSelectInput
                   label="Centro de costos"
                   data={costCenterTypes}
                   name="costCenter"
-                  register={register}
-                  required
-                  value={costCenter}
-                  disabled={!isEditing}
+                  selectedItems={selectedCostCenters}
+                  setSelectedItems={setSelectedCostCenter}
+                  disabled={true}
                 />
 
                 <SelectInput
