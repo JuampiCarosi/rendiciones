@@ -6,6 +6,8 @@ import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import { prisma } from "../../../server/db/client";
 import { env } from "../../../env/server.mjs";
 
+const allowedEmails = env.ALLOWED_EMAILS?.split(",");
+
 export const authOptions: NextAuthOptions = {
   callbacks: {
     session({ session, user }) {
@@ -23,10 +25,11 @@ export const authOptions: NextAuthOptions = {
       if (env.NEXTAUTH_TEST_MODE === "true") return true;
 
       return Boolean(
-        account.provider === "google" &&
+        (account.provider === "google" &&
           profile.email &&
           profile.email_verified &&
-          profile.email.endsWith("@cldproyectos.com")
+          profile.email.endsWith("@cldproyectos.com")) ||
+          allowedEmails?.includes(profile.email || "")
       );
     },
   },

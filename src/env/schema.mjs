@@ -13,6 +13,7 @@ export const serverSchema = z.object({
   NEXTAUTH_TEST_MODE: z.enum(["true", "false"]),
   GOOGLE_CLIENT_ID: z.string(),
   GOOGLE_CLIENT_SECRET: z.string(),
+  ALLOWED_EMAILS: z.string().optional(),
 });
 
 /**
