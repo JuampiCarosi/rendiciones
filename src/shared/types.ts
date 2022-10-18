@@ -6,7 +6,7 @@ export const ticketParamsVal = z.object({
   invoiceDate: z.date(),
   expenseType: z.string().min(1),
   invoiceType: z.string().min(1),
-  costCenter: z.string().min(1),
+  costCenter: z.string().min(1).optional(),
 });
 
 export const movementsParamsVal = z.object({
