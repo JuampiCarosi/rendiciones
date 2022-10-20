@@ -19,6 +19,7 @@ export const ticketsRouter = t.router({
     return ctx.prisma.ticket.create({
       data: {
         ...input,
+        costCenter: input.costCenter || "N/A",
         ticketId,
         userName: ctx.session?.user?.name || "usuario generico",
         userId: ctx.session?.user?.id,
