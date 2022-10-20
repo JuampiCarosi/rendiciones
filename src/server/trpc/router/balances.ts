@@ -35,4 +35,36 @@ export const balancesRouter = t.router({
 
     return balance;
   }),
+  getAll: t.procedure.query(async ({ ctx }) => {
+    const tickets = await ctx.prisma.ticket.findMany();
+    const movements = await ctx.prisma.movements.findMany();
+    const users = await ctx.prisma.user.findMany();
+    const balances: { [key: string]: number } = {};
+
+    users.forEach((user) => {
+      balances[user.id] = 0;
+    });
+
+    tickets.forEach((ticket: Ticket) => {
+      balances[ticket.userId] -= ticket.amount;
+    });
+    movements.forEach((movement: Movements) => {
+      if (movement.fromUser) {
+        balances[movement.fromUser] -= movement.amount;
+      }
+      if (movement.toUser) {
+        balances[movement.toUser] += movement.amount;
+      }
+    });
+
+    const balancesByName = Object.keys(balances).map((key) => {
+      const user = users.find((user) => user.id === key);
+      return {
+        name: user?.name,
+        balance: balances[key],
+      };
+    });
+
+    return balancesByName;
+  }),
 });
