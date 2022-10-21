@@ -1,6 +1,7 @@
 import { NextPage } from "next";
 import { useSession } from "next-auth/react";
 import Table from "../../components/Table";
+import { getNextWednesday } from "../../utils/helpers";
 import { trpc } from "../../utils/trpc";
 
 const columns = [
@@ -11,6 +12,12 @@ const columns = [
 const Admin: NextPage = () => {
   const { data: session } = useSession();
   const { data } = trpc.balances.getAll.useQuery();
+
+  const { data: report } = trpc.balances.generateReport.useQuery(
+    getNextWednesday(new Date("2022-10-19T00:00:00.000Z"))
+  );
+  console.log(report);
+
   if (session?.user?.email !== "juampicarosi@gmail.com" && session?.user?.email !== "ac@cldproyectos.com") {
     return <>No tenes acceso a esta pagina</>;
   }

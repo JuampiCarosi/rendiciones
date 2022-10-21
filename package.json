@@ -22,6 +22,7 @@
     "@trpc/next": "^10.0.0-proxy-beta.12",
     "@trpc/react": "^10.0.0-proxy-beta.12",
     "@trpc/server": "^10.0.0-proxy-beta.12",
+    "exceljs": "^4.3.0",
     "next": "12.2.5",
     "next-auth": "^4.10.2",
     "react": "18.2.0",

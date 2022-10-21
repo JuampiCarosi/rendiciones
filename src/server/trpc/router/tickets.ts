@@ -28,7 +28,7 @@ export const ticketsRouter = t.router({
     });
   }),
   getByDate: t.procedure.input(z.date()).query(async ({ ctx, input }) => {
-    return ctx.prisma.ticket.findMany({
+    const tickets = await ctx.prisma.ticket.findMany({
       where: {
         pettyCashDate: getNextWednesday(input),
         userId: ctx.session?.user?.id,
@@ -37,13 +37,36 @@ export const ticketsRouter = t.router({
         ticketId: "desc",
       },
     });
+    return tickets.map((ticket) => ({
+      ...ticket,
+      costCenter: JSON.parse(ticket.costCenter) as string[],
+    }));
+  }),
+  getAllByDate: t.procedure.input(z.date()).query(async ({ ctx, input }) => {
+    const tickets = await ctx.prisma.ticket.findMany({
+      where: {
+        pettyCashDate: getNextWednesday(input),
+      },
+      orderBy: {
+        ticketId: "desc",
+      },
+    });
+    return tickets.map((ticket) => ({
+      ...ticket,
+      costCenter: JSON.parse(ticket.costCenter) as string[],
+    }));
   }),
   getById: t.procedure.input(z.string()).query(async ({ ctx, input }) => {
-    return ctx.prisma.ticket.findUnique({
+    const ticket = await ctx.prisma.ticket.findUnique({
       where: {
         id: input,
       },
     });
+    if (!ticket) return null;
+    return {
+      ...ticket,
+      costCenter: JSON.parse(ticket.costCenter),
+    };
   }),
   editTicket: t.procedure.input(editTicketsVal).mutation(async ({ input, ctx }) => {
     if (!ctx.session?.user) throw new Error("Not logged in");

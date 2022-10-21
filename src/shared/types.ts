@@ -1,3 +1,4 @@
+import { Ticket } from "@prisma/client";
 import { z } from "zod";
 
 export const ticketParamsVal = z.object({
@@ -17,3 +18,5 @@ export const movementsParamsVal = z.object({
   date: z.date(),
 });
 export type expenseTypes = "combustible" | "viaticos" | "peajes" | "otros";
+
+export type ParsedTicket = Omit<Ticket, "costCenter"> & { costCenter: string[] };

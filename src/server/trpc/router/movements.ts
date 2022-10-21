@@ -31,4 +31,14 @@ export const movementsRouter = t.router({
       },
     });
   }),
+  getAllByDate: t.procedure.input(z.date()).query(async ({ ctx, input }) => {
+    return ctx.prisma.movements.findMany({
+      where: {
+        pettyCashDate: getNextWednesday(input),
+      },
+      orderBy: {
+        date: "desc",
+      },
+    });
+  }),
 });
