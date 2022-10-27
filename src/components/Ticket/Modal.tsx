@@ -28,7 +28,17 @@ const expenseTypes = [
   { value: "otros", label: "Otros" },
 ];
 
-const costCenterTypes = ["GRA", "GSP", "PICC", "BOAT", "MIGUE", "AGPA", "LEON", "CAMP", "INCHU"];
+export const costCenterTypes = [
+  "GRA",
+  "GSP",
+  "PICC",
+  "BOAT",
+  "MIGUE",
+  "AGPA",
+  "LEON",
+  "CAMP",
+  "INCHU",
+] as const;
 
 const errorMessages = {
   invoiceType: "tipo de factura",

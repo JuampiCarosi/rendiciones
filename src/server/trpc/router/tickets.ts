@@ -48,7 +48,7 @@ export const ticketsRouter = t.router({
         pettyCashDate: getNextWednesday(input),
       },
       orderBy: {
-        ticketId: "desc",
+        ticketId: "asc",
       },
     });
     return tickets.map((ticket) => ({

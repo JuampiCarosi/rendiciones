@@ -13,9 +13,7 @@ const Admin: NextPage = () => {
   const { data: session } = useSession();
   const { data } = trpc.balances.getAll.useQuery();
 
-  const { data: report } = trpc.balances.generateReport.useQuery(
-    getNextWednesday(new Date("2022-10-19T00:00:00.000Z"))
-  );
+  const { data: report } = trpc.balances.generateReport.useQuery(getNextWednesday(new Date()));
   console.log(report);
 
   if (session?.user?.email !== "juampicarosi@gmail.com" && session?.user?.email !== "ac@cldproyectos.com") {
