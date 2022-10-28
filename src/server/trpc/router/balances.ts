@@ -5,7 +5,7 @@ import { t } from "../trpc";
 import { ticketsRouter } from "./tickets";
 import { movementsRouter } from "./movements";
 import date from "date-and-time";
-import { costCenterTypes } from "../../../components/Ticket/Modal";
+import { costCenterTypes } from "../../../shared/types";
 
 type CostCenter = typeof costCenterTypes[number];
 

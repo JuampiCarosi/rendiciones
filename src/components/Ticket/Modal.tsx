@@ -6,6 +6,7 @@ import { Dialog, Transition } from "@headlessui/react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import toast, { Toaster } from "react-hot-toast";
+import { costCenterTypes } from "../../shared/types";
 
 export const ticketParamsVal = z.object({
   amount: z.number().min(1),
@@ -27,18 +28,6 @@ const expenseTypes = [
   { value: "peajes", label: "Peajes" },
   { value: "otros", label: "Otros" },
 ];
-
-export const costCenterTypes = [
-  "GRA",
-  "GSP",
-  "PICC",
-  "BOAT",
-  "MIGUE",
-  "AGPA",
-  "LEON",
-  "CAMP",
-  "INCHU",
-] as const;
 
 const errorMessages = {
   invoiceType: "tipo de factura",
@@ -155,7 +144,7 @@ const InvoiceModal = ({ handleShow, show }: Props) => {
 
                 <MultipleSelectInput
                   label="Centro de costos"
-                  data={costCenterTypes}
+                  data={costCenterTypes as unknown as string[]}
                   name="costCenter"
                   selectedItems={selectedCostCenters}
                   setSelectedItems={setSelectedCostCenter}

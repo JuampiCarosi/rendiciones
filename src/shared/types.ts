@@ -20,3 +20,15 @@ export const movementsParamsVal = z.object({
 export type expenseTypes = "combustible" | "viaticos" | "peajes" | "otros";
 
 export type ParsedTicket = Omit<Ticket, "costCenter"> & { costCenter: string[] };
+
+export const costCenterTypes = [
+  "GRA",
+  "GSP",
+  "PICC",
+  "BOAT",
+  "MIGUE",
+  "AGPA",
+  "LEON",
+  "CAMP",
+  "INCHU",
+] as const;
