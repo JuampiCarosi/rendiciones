@@ -11,15 +11,15 @@ import TicketCard from "../components/Ticket/Card";
 import MovementCard from "../components/Movement/Card";
 import Bottom from "../components/Bottom";
 import EditTicketModal from "../components/Ticket/EditModal";
-import { Ticket } from "@prisma/client";
 import { getNextWednesday } from "../utils/helpers";
+import { ParsedTicket } from "../shared/types";
 
 const Home: NextPage = () => {
   const [showTicketModal, setShowTicketModal] = useState(false);
   const [showEntryModal, setShowEntryModal] = useState(false);
   const [currentPettyCash, setCurrentPettyCash] = useState<Date>(getNextWednesday(new Date()));
   const [showEditTicketModal, setShowEditTicketModal] = useState(false);
-  const [currentTicket, setCurrentTicket] = useState<Ticket>();
+  const [currentTicket, setCurrentTicket] = useState<ParsedTicket>();
   const utils = trpc.useContext();
 
   const { data: movements } = trpc.movements.getByDate.useQuery(currentPettyCash);
@@ -37,7 +37,7 @@ const Home: NextPage = () => {
     setShowEditTicketModal(value);
   };
 
-  const handleEditTicket = (ticket: Ticket) => {
+  const handleEditTicket = (ticket: ParsedTicket) => {
     setShowEditTicketModal(true);
     setCurrentTicket(ticket);
   };

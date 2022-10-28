@@ -53,7 +53,7 @@ type Props = {
   invoiceDate: Date;
   invoiceType: string;
   expenseType: string;
-  costCenter: string;
+  costCenter: string[];
 };
 
 const EditTicketModal = ({
