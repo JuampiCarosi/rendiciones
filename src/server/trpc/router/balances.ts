@@ -186,16 +186,17 @@ export const balancesRouter = t.router({
     });
 
     movements.forEach((movement) => {
-      const report = reports.find((r) => {
+      const affectedReports = reports.filter((r) => {
         return r.userId === movement.fromUser || r.userId === movement.toUser;
       });
-      if (report) {
+
+      affectedReports.forEach((report) => {
         if (report.userId === movement.fromUser) {
           report.movements.push({ ...movement, cashOut: movement.amount * -1, cashIn: 0 });
         } else {
           report.movements.push({ ...movement, cashOut: 0, cashIn: movement.amount });
         }
-      }
+      });
     });
 
     return reports;
