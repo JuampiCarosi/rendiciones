@@ -6,9 +6,7 @@ export const usersRouter = t.router({
     const userData = await ctx.prisma.user.findMany({
       select: { name: true, id: true },
       where: {
-        id: {
-          not: process.env.ADMIN_ID,
-        },
+        isBanker: false,
       },
     });
     return userData.map((user) => ({
@@ -24,7 +22,7 @@ export const usersRouter = t.router({
             id: ctx.session?.user?.id,
           },
           {
-            id: process.env.ADMIN_ID,
+            isBanker: true,
           },
         ],
       },
