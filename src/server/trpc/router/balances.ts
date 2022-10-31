@@ -90,22 +90,20 @@ export const balancesRouter = t.router({
         pettyCashDate: parsePettyCashDate(input).date,
       },
     });
-    const balance: { costCenter: CostCenter; amount: number }[] = [];
+    const balances: { costCenter: CostCenter; amount: number }[] = [];
 
     tickets.forEach((ticket: Ticket) => {
       const costCenter = JSON.parse(ticket.costCenter);
       costCenter.forEach((c: CostCenter) => {
-        const index = balance.findIndex((item) => item.costCenter === c);
-        if (index === -1) {
-          balance.push({ costCenter: c as CostCenter, amount: ticket.amount });
+        const balance = balances.find((item) => item.costCenter === c);
+        if (!balance) {
+          balances.push({ costCenter: c as CostCenter, amount: ticket.amount });
         } else {
-          // eslint-disable-next-line
-          // @ts-ignore
-          balance[index].amount += ticket.amount / costCenter.length;
+          balance.amount += ticket.amount / costCenter.length;
         }
       });
     });
-    return balance;
+    return balances;
   }),
   getAll: t.procedure.query(async ({ ctx }) => {
     const tickets = await ctx.prisma.ticket.findMany();
