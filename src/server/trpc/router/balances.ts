@@ -137,7 +137,9 @@ export const balancesRouter = t.router({
 
     return balancesByName;
   }),
-  generateReport: t.procedure.input(z.date()).query(async ({ ctx, input }) => {
+  generateReport: t.procedure.input(z.date().optional()).query(async ({ ctx, input }) => {
+    const inputDate = input ?? new Date(new Date().setDate(new Date().getDate() - 7));
+    console.log(inputDate);
     const users = await ctx.prisma.user.findMany();
     const reports: Array<{
       userId: string;
@@ -152,20 +154,21 @@ export const balancesRouter = t.router({
     const ticketCaller = ticketsRouter.createCaller(ctx);
     const movementsCaller = movementsRouter.createCaller(ctx);
 
-    const tickets = await ticketCaller.getAllByDate(input);
-    const movements = await movementsCaller.getAllByDate(input);
+    const tickets = await ticketCaller.getAllByDate(inputDate);
+    const movements = await movementsCaller.getAllByDate(inputDate);
 
     await Promise.all(
       users.map(async (user) => {
         const report = {
           name: user.name ?? undefined,
-          pettyCash: parsePettyCashDate(input).label,
+          pettyCash: parsePettyCashDate(inputDate).label,
           tickets: [],
           movements: [],
           userId: user.id,
-          balance: (await balancesCaller.getBalanceByDate({ userId: user.id, date: input })) ?? 0,
+          balance: (await balancesCaller.getBalanceByDate({ userId: user.id, date: inputDate })) ?? 0,
           prevBalance:
-            (await balancesCaller.getBalanceByDate({ userId: user.id, date: date.addDays(input, -7) })) ?? 0,
+            (await balancesCaller.getBalanceByDate({ userId: user.id, date: date.addDays(inputDate, -7) })) ??
+            0,
         };
         reports.push(report);
       })

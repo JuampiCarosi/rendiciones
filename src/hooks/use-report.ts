@@ -1,4 +1,4 @@
-import { getNextWednesday } from "../utils/helpers";
+import { getNextWednesday, parsePettyCashDate } from "../utils/helpers";
 import { trpc } from "../utils/trpc";
 import ExcelJS from "exceljs";
 
@@ -67,7 +67,7 @@ export const useReport = (date: Date) => {
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
-      a.download = "report.xlsx";
+      a.download = `${parsePettyCashDate(date).label}.xlsx`;
       a.click();
     });
 
