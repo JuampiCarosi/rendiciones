@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { env } from "../../../env/server.mjs";
 import { movementsParamsVal } from "../../../shared/types";
 import { getNextWednesday } from "../../../utils/helpers";
 import { t } from "../trpc";
@@ -23,6 +24,9 @@ export const movementsRouter = t.router({
           },
           {
             toUser: ctx.session?.user?.id,
+          },
+          {
+            fromUser: ctx.session?.user?.isAdmin ? env.BANKER_ID : "",
           },
         ],
       },
