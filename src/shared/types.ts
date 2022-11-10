@@ -1,4 +1,4 @@
-import { Ticket } from "@prisma/client";
+import { Movements, Ticket } from "@prisma/client";
 import { z } from "zod";
 
 export const ticketParamsVal = z.object({
@@ -33,3 +33,16 @@ export const costCenterTypes = [
   "CAMP",
   "INCHU",
 ] as const;
+
+type ExcelTicket = Omit<Ticket, " amount"> & { cashOut: number; cashIn: number };
+type ExcelMovement = Omit<Movements, "amount"> & { cashOut: number; cashIn: number };
+
+export type Report = Array<{
+  userId: string;
+  name?: string;
+  pettyCash: string;
+  tickets: ExcelTicket[];
+  balance: number;
+  movements: ExcelMovement[];
+  prevBalance: number;
+}>;

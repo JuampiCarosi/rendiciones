@@ -15,6 +15,10 @@ export const serverSchema = z.object({
   GOOGLE_CLIENT_SECRET: z.string(),
   ALLOWED_EMAILS: z.string().optional(),
   BANKER_ID: z.string(),
+  GOOGLE_PRIVATE_KEY: z.string(),
+  GOOGLE_PROJECTID: z.string(),
+  GOOGLE_CLIENT_EMAIL: z.string(),
+  API_SECRET_KEY: z.string(),
 });
 
 /**

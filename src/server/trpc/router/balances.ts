@@ -5,12 +5,9 @@ import { t } from "../trpc";
 import { ticketsRouter } from "./tickets";
 import { movementsRouter } from "./movements";
 import date from "date-and-time";
-import { costCenterTypes } from "../../../shared/types";
+import { costCenterTypes, Report } from "../../../shared/types";
 
 type CostCenter = typeof costCenterTypes[number];
-
-type ExcelTicket = Omit<Ticket, " amount"> & { cashOut: number; cashIn: number };
-type ExcelMovement = Omit<Movements, "amount"> & { cashOut: number; cashIn: number };
 
 export const balancesRouter = t.router({
   getBalance: t.procedure.input(z.string().optional()).query(async ({ ctx, input }) => {
@@ -87,10 +84,10 @@ export const balancesRouter = t.router({
       }
       return balance;
     }),
-  getCostCenterBalances: t.procedure.input(z.date()).query(async ({ ctx, input }) => {
+  getCostCenterBalances: t.procedure.input(z.date().optional()).query(async ({ ctx, input }) => {
     const tickets = await ctx.prisma.ticket.findMany({
       where: {
-        pettyCashDate: parsePettyCashDate(input).date,
+        pettyCashDate: parsePettyCashDate(input ?? getNextWednesday(new Date())).date,
       },
     });
     const balances: { costCenter: CostCenter; amount: number }[] = [];
@@ -143,15 +140,7 @@ export const balancesRouter = t.router({
   generateReport: t.procedure.input(z.date().optional()).query(async ({ ctx, input }) => {
     const inputDate = input ?? new Date(new Date().setDate(new Date().getDate() - 7));
     const users = await ctx.prisma.user.findMany();
-    const reports: Array<{
-      userId: string;
-      name?: string;
-      pettyCash: string;
-      tickets: ExcelTicket[];
-      balance: number;
-      movements: ExcelMovement[];
-      prevBalance: number;
-    }> = [];
+    const reports: Report = [];
     const balancesCaller = balancesRouter.createCaller(ctx);
     const ticketCaller = ticketsRouter.createCaller(ctx);
     const movementsCaller = movementsRouter.createCaller(ctx);

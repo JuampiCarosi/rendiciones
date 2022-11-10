@@ -20,13 +20,17 @@ export const t = initTRPC.context<Context>().create({
   errorFormatter({ shape, error }) {
     let customErrorMessage = "";
     console.log("Mi error", error.message);
-    const errorJson = JSON.parse(error.message);
-    if (errorJson[0].code === "too_small") {
-      errorJson[0].path.forEach((path: Path) => {
-        customErrorMessage += `El campo ${errorMessages[path]} es requerido\n`;
-      });
-    } else {
-      customErrorMessage = "Hubo un error al subir el ticket";
+    try {
+      const errorJson = JSON.parse(error.message);
+      if (errorJson[0].code === "too_small") {
+        errorJson[0].path.forEach((path: Path) => {
+          customErrorMessage += `El campo ${errorMessages[path]} es requerido\n`;
+        });
+      } else {
+        customErrorMessage = "Hubo un error al subir el ticket";
+      }
+    } catch {
+      customErrorMessage = "Hubo un error al parsear el error";
     }
 
     return {
