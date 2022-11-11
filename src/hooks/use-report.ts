@@ -25,8 +25,6 @@ export const useReport = (date: Date) => {
   const { data: costCenterBalance, isLoading: isBalancesLoading } =
     trpc.balances.getCostCenterBalances.useQuery(getNextWednesday(date));
 
-  console.log(reports);
-
   const workbook = new ExcelJS.Workbook();
 
   reports?.forEach((report) => {

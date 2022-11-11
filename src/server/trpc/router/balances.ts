@@ -6,7 +6,6 @@ import { ticketsRouter } from "./tickets";
 import { movementsRouter } from "./movements";
 import date from "date-and-time";
 import { costCenterTypes } from "../../../shared/types";
-import { env } from "process";
 
 type CostCenter = typeof costCenterTypes[number];
 
