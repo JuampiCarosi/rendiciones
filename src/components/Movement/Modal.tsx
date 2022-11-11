@@ -29,6 +29,7 @@ type ErrorMessageKeys = keyof typeof errorMessages;
 
 const EntryModal = ({ handleShow, show }: Props) => {
   const utils = trpc.useContext();
+  const { data: bankersId } = trpc.users.getBankersId.useQuery();
 
   const {
     register,
@@ -71,6 +72,7 @@ const EntryModal = ({ handleShow, show }: Props) => {
       amount,
       description,
       date: new Date(),
+      isFromBank: bankersId?.includes(fromUser),
     });
     handleClose();
   });

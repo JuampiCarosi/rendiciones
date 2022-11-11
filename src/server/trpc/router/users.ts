@@ -42,4 +42,13 @@ export const usersRouter = t.router({
     });
     return user;
   }),
+  getBankersId: t.procedure.query(async ({ ctx }) => {
+    const users = await ctx.prisma.user.findMany({
+      where: {
+        isBanker: true,
+      },
+      select: { id: true },
+    });
+    return users.map((id) => id.id);
+  }),
 });
