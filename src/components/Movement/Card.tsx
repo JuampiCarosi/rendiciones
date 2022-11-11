@@ -13,16 +13,18 @@ const formatoPesos = new Intl.NumberFormat("es-AR");
 const MovementCard = ({ movement }: MovementCardProps) => {
   const { data: session } = useSession();
 
-  const expenseType = movement.isFromBank
-    ? "Caja central"
-    : movement.fromUser === session?.user?.id
-    ? "Egreso"
-    : "Ingreso";
-  const expenseColor = movement.isFromBank
-    ? "bg-purple-200 text-purple-800"
-    : movement.fromUser === session?.user?.id
-    ? "bg-red-200 text-red-800"
-    : "bg-green-200 text-green-800";
+  const expenseType =
+    movement.fromUser === session?.user?.id
+      ? "Egreso"
+      : movement.toUser === session?.user?.id
+      ? "Ingreso"
+      : "Caja central";
+  const expenseColor =
+    movement.fromUser === session?.user?.id
+      ? "bg-red-200 text-red-800"
+      : movement.toUser === session?.user?.id
+      ? "bg-green-200 text-green-800"
+      : "bg-purple-200 text-purple-800";
   const movementPreposition = movement.fromUser === session?.user?.id ? "Para" : "De";
   const { data: movementUser } = trpc.users.getById.useQuery(
     session?.user?.id ? movement.toUser : movement.fromUser
