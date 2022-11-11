@@ -1,11 +1,12 @@
 import { Movements, Ticket } from "@prisma/client";
 import { z } from "zod";
-import { parsePettyCashDate } from "../../../utils/helpers";
+import { getNextWednesday, parsePettyCashDate } from "../../../utils/helpers";
 import { t } from "../trpc";
 import { ticketsRouter } from "./tickets";
 import { movementsRouter } from "./movements";
 import date from "date-and-time";
 import { costCenterTypes } from "../../../shared/types";
+import { env } from "process";
 
 type CostCenter = typeof costCenterTypes[number];
 
@@ -46,42 +47,45 @@ export const balancesRouter = t.router({
 
     return balance;
   }),
-  getBalanceByDate: t.procedure
-    .input(z.object({ userId: z.string().optional(), date: z.date() }))
+  getPrevBalance: t.procedure
+    .input(z.object({ userId: z.string(), date: z.date() }))
     .query(async ({ ctx, input }) => {
-      const tickets = await ctx.prisma.ticket.findMany({
-        where: {
-          userId: input.userId ?? ctx.session?.user?.id,
-          pettyCashDate: parsePettyCashDate(input.date).date,
-        },
-      });
-      const movements = await ctx.prisma.movements.findMany({
-        where: {
-          pettyCashDate: parsePettyCashDate(input.date).date,
-
-          OR: [
-            {
-              fromUser: input.userId ?? ctx.session?.user?.id,
-            },
-            {
-              toUser: input.userId ?? ctx.session?.user?.id,
-            },
-          ],
-        },
-      });
       let balance = 0;
+      let date = input.date;
+      while (date.getTime() > new Date(2022, 9, 25).getTime()) {
+        const tickets = await ctx.prisma.ticket.findMany({
+          where: {
+            userId: input.userId ?? ctx.session?.user?.id,
+            pettyCashDate: getNextWednesday(input.date),
+          },
+        });
+        const movements = await ctx.prisma.movements.findMany({
+          where: {
+            pettyCashDate: getNextWednesday(input.date),
 
-      tickets.forEach((ticket: Ticket) => {
-        balance -= ticket.amount;
-      });
-      movements.forEach((movement: Movements) => {
-        if (movement.fromUser === ctx.session?.user?.id) {
-          balance -= movement.amount;
-        } else {
-          balance += movement.amount;
-        }
-      });
+            OR: [
+              {
+                fromUser: input.userId ?? ctx.session?.user?.id,
+              },
+              {
+                toUser: input.userId ?? ctx.session?.user?.id,
+              },
+            ],
+          },
+        });
 
+        tickets.forEach((ticket: Ticket) => {
+          balance -= ticket.amount;
+        });
+        movements.forEach((movement: Movements) => {
+          if (movement.fromUser === input.userId) {
+            balance -= movement.amount;
+          } else {
+            balance += movement.amount;
+          }
+        });
+        date = new Date(date.setDate(date.getDate() - 7));
+      }
       return balance;
     }),
   getCostCenterBalances: t.procedure.input(z.date()).query(async ({ ctx, input }) => {
@@ -139,7 +143,6 @@ export const balancesRouter = t.router({
   }),
   generateReport: t.procedure.input(z.date().optional()).query(async ({ ctx, input }) => {
     const inputDate = input ?? new Date(new Date().setDate(new Date().getDate() - 7));
-    console.log(inputDate);
     const users = await ctx.prisma.user.findMany();
     const reports: Array<{
       userId: string;
@@ -165,9 +168,9 @@ export const balancesRouter = t.router({
           tickets: [],
           movements: [],
           userId: user.id,
-          balance: (await balancesCaller.getBalanceByDate({ userId: user.id, date: inputDate })) ?? 0,
+          balance: (await balancesCaller.getPrevBalance({ userId: user.id, date: inputDate })) ?? 0,
           prevBalance:
-            (await balancesCaller.getBalanceByDate({ userId: user.id, date: date.addDays(inputDate, -7) })) ??
+            (await balancesCaller.getPrevBalance({ userId: user.id, date: date.addDays(inputDate, -7) })) ??
             0,
         };
         reports.push(report);
