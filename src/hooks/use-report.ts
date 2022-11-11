@@ -19,8 +19,13 @@ const costCenterSheetColumns = [
 ];
 
 export const useReport = (date: Date) => {
-  const { data: reports } = trpc.balances.generateReport.useQuery(getNextWednesday(date));
-  const { data: costCenterBalance } = trpc.balances.getCostCenterBalances.useQuery(getNextWednesday(date));
+  const { data: reports, isLoading: isReportLoading } = trpc.balances.generateReport.useQuery(
+    getNextWednesday(date)
+  );
+  const { data: costCenterBalance, isLoading: isBalancesLoading } =
+    trpc.balances.getCostCenterBalances.useQuery(getNextWednesday(date));
+
+  console.log(reports);
 
   const workbook = new ExcelJS.Workbook();
 
@@ -71,5 +76,5 @@ export const useReport = (date: Date) => {
       a.click();
     });
 
-  return { downloadReport };
+  return { downloadReport, isLoading: isReportLoading || isBalancesLoading };
 };

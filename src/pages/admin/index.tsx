@@ -6,8 +6,8 @@ import { useReport } from "../../hooks/use-report";
 const Admin: NextPage = () => {
   const { data: session } = useSession();
 
-  const date = new Date(new Date().setDate(new Date().getDate() - 7));
-  const { downloadReport } = useReport(date);
+  const date = new Date(new Date().setDate(new Date().getDate() - 14));
+  const { downloadReport, isLoading } = useReport(date);
 
   if (session?.user?.email !== "juampicarosi@gmail.com" && session?.user?.email !== "ac@cldproyectos.com") {
     return <>No tenes acceso a esta pagina</>;
@@ -15,7 +15,7 @@ const Admin: NextPage = () => {
 
   return (
     <>
-      <Button label="Descargar reporte" onClick={() => downloadReport()} />
+      <Button label="Descargar reporte" disabled={isLoading} onClick={() => downloadReport()} />
     </>
   );
 };
