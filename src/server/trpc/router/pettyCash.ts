@@ -5,25 +5,12 @@ export const pettyCashRouter = t.router({
   getDates: t.procedure.query(async ({ ctx }) => {
     const currentPettyCashDate = getNextWednesday(new Date());
     const ticketPettyCashDates = await ctx.prisma.ticket.findMany({
-      where: {
-        userId: ctx.session?.user?.id,
-      },
       orderBy: {
         pettyCashDate: "desc",
       },
       distinct: ["pettyCashDate"],
     });
     const movementPettyCashDates = await ctx.prisma.movements.findMany({
-      where: {
-        OR: [
-          {
-            fromUser: ctx.session?.user?.id,
-          },
-          {
-            toUser: ctx.session?.user?.id,
-          },
-        ],
-      },
       orderBy: {
         pettyCashDate: "desc",
       },
@@ -43,7 +30,7 @@ export const pettyCashRouter = t.router({
       pettyCashDates.unshift(parsePettyCashDate(currentPettyCashDate));
     }
     if (pettyCashDates.length > 5) {
-      return pettyCashDates.slice(0, 5);
+      return pettyCashDates.slice(5);
     }
     return pettyCashDates;
   }),
