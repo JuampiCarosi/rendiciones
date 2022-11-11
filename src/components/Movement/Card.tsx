@@ -25,7 +25,7 @@ const MovementCard = ({ movement }: MovementCardProps) => {
       : movement.toUser === session?.user?.id
       ? "bg-green-200 text-green-800"
       : "bg-purple-200 text-purple-800";
-  const movementPreposition = movement.fromUser === session?.user?.id ? "Para" : "De";
+  const movementPreposition = movement.toUser === session?.user?.id ? "De" : "Para";
   const { data: movementUser } = trpc.users.getById.useQuery(
     session?.user?.id ? movement.toUser : movement.fromUser
   );
