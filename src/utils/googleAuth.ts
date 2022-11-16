@@ -16,7 +16,5 @@ export const authenticateGoogle = () => {
     },
   });
 
-  console.log(auth);
-
   return auth;
 };

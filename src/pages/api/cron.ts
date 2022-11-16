@@ -33,13 +33,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
         const date = new Date();
 
-        console.log(
-          "report url",
-          `${env.NEXTAUTH_URL}/api/trpc/balances.generateReport?input=${encodeURIComponent(
-            JSON.stringify(getNextWednesday(date))
-          )}`
-        );
-
         const reportResult = await fetch(
           `${env.NEXTAUTH_URL}/api/trpc/balances.generateReport?input=${encodeURIComponent(
             JSON.stringify(getNextWednesday(date))
