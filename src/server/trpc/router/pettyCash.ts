@@ -18,6 +18,7 @@ export const pettyCashRouter = t.router({
     });
 
     const pettyCashDates: Array<{ date: Date; label: string }> = [];
+
     ticketPettyCashDates.forEach((ticket) => {
       pettyCashDates.push(parsePettyCashDate(ticket.pettyCashDate));
     });
@@ -30,7 +31,7 @@ export const pettyCashRouter = t.router({
       pettyCashDates.unshift(parsePettyCashDate(currentPettyCashDate));
     }
     if (pettyCashDates.length > 5) {
-      return pettyCashDates.slice(5);
+      return pettyCashDates.slice(0, 5);
     }
     return pettyCashDates;
   }),

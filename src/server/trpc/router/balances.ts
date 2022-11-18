@@ -82,6 +82,7 @@ export const balancesRouter = t.router({
         });
         date = new Date(date.setDate(date.getDate() - 7));
       }
+      console.log(date);
       return balance;
     }),
   getCostCenterBalances: t.procedure.input(z.date().optional()).query(async ({ ctx, input }) => {

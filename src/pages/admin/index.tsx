@@ -6,7 +6,7 @@ import { useReport } from "../../hooks/use-report";
 const Admin: NextPage = () => {
   const { data: session } = useSession();
 
-  const date = new Date(new Date().setDate(new Date().getDate() - 14));
+  const date = new Date(new Date().setDate(new Date().getDate() - 7));
   const { downloadReport, isLoading } = useReport(date);
 
   if (session?.user?.email !== "juampicarosi@gmail.com" && session?.user?.email !== "ac@cldproyectos.com") {
