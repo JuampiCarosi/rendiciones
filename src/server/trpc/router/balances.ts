@@ -34,7 +34,7 @@ export const balancesRouter = t.router({
       balance -= ticket.amount;
     });
     movements.forEach((movement: Movements) => {
-      if (movement.fromUser === ctx.session?.user?.id) {
+      if (movement.fromUser === (input ?? ctx.session?.user?.id)) {
         balance -= movement.amount;
       } else {
         balance += movement.amount;
@@ -48,16 +48,16 @@ export const balancesRouter = t.router({
     .query(async ({ ctx, input }) => {
       let balance = 0;
       let date = input.date;
-      while (date.getTime() > new Date(2022, 9, 25).getTime()) {
+      while (date.getTime() > new Date(2022, 9, 19).getTime()) {
         const tickets = await ctx.prisma.ticket.findMany({
           where: {
             userId: input.userId ?? ctx.session?.user?.id,
-            pettyCashDate: getNextWednesday(input.date),
+            pettyCashDate: getNextWednesday(date),
           },
         });
         const movements = await ctx.prisma.movements.findMany({
           where: {
-            pettyCashDate: getNextWednesday(input.date),
+            pettyCashDate: getNextWednesday(date),
 
             OR: [
               {
@@ -74,7 +74,7 @@ export const balancesRouter = t.router({
           balance -= ticket.amount;
         });
         movements.forEach((movement: Movements) => {
-          if (movement.fromUser === input.userId) {
+          if (movement.fromUser === (input.userId ?? ctx.session?.user?.id)) {
             balance -= movement.amount;
           } else {
             balance += movement.amount;
@@ -82,7 +82,6 @@ export const balancesRouter = t.router({
         });
         date = new Date(date.setDate(date.getDate() - 7));
       }
-      console.log(date);
       return balance;
     }),
   getCostCenterBalances: t.procedure.input(z.date().optional()).query(async ({ ctx, input }) => {
