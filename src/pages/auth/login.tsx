@@ -1,5 +1,6 @@
 import { signIn } from "next-auth/react";
 import Image from "next/image";
+import { env } from "../../env/client.mjs";
 
 const Login = () => {
   return (
@@ -19,7 +20,7 @@ const Login = () => {
           <button
             type="submit"
             className="group relative w-full rounded-md border border-transparent bg-indigo-600 py-2 px-4 text-sm font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-            onClick={() => signIn("google", { callbackUrl: process.env.NEXTAUTH_URL })}
+            onClick={() => signIn("google", { callbackUrl: env.NEXT_PUBLIC_URL })}
           >
             Iniciar sesion
           </button>

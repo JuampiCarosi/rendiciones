@@ -50,7 +50,7 @@ const Home: NextPage = () => {
 
   return (
     <div className="flex h-full flex-col">
-      <Top setPettyCash={updateCurrentPettyCash} />
+      <Top setPettyCash={updateCurrentPettyCash} currentPettyCash={currentPettyCash} />
       <div className="w-full grow overflow-scroll pt-2">
         <div className="m-auto max-w-lg">
           <TicketModal show={showTicketModal} handleShow={handleShowTicketModal} />

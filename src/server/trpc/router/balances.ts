@@ -6,6 +6,25 @@ import { ticketsRouter } from "./tickets";
 import { movementsRouter } from "./movements";
 import date from "date-and-time";
 import { costCenterTypes, Report } from "../../../shared/types";
+import ExcelJS from "exceljs";
+import { readFileSync } from "fs";
+import { env } from "../../../env/client.mjs";
+
+const sheetColumns = [
+  { header: "ID", key: "ticketId", width: 16 },
+  { header: "Fecha", key: "invoiceDate", width: 16 },
+  { header: "Tipo de ticket", key: "invoiceType", width: 16 },
+  { header: "Descripción", key: "description", width: 16 },
+  { header: "Centro de costos", key: "costCenter", width: 16 },
+  { header: "Tipo de gasto", key: "expenseType", width: 16 },
+  { header: "Salida de caja", key: "cashOut", width: 16 },
+  { header: "Ingreso de caja", key: "cashIn", width: 16 },
+];
+
+const costCenterSheetColumns = [
+  { header: "Centro de costos", key: "costCenter", width: 16 },
+  { header: "Monto", key: "amount", width: 16 },
+];
 
 type CostCenter = typeof costCenterTypes[number];
 
@@ -137,9 +156,12 @@ export const balancesRouter = t.router({
 
     return balancesByName;
   }),
-  generateReport: t.procedure.input(z.date().optional()).query(async ({ ctx, input }) => {
+  generateReport: t.procedure.input(z.date()).mutation(async ({ ctx, input }) => {
     const inputDate = input ?? new Date(new Date().setDate(new Date().getDate() - 7));
-    const users = await ctx.prisma.user.findMany();
+    const users = (await ctx.prisma.user.findMany()).filter(
+      (user) =>
+        env.NEXT_PUBLIC_TEST_MODE === "true" || (user.isAdmin === false && user.name !== "Caja central")
+    );
     const reports: Report = [];
     const balancesCaller = balancesRouter.createCaller(ctx);
     const ticketCaller = ticketsRouter.createCaller(ctx);
@@ -147,6 +169,8 @@ export const balancesRouter = t.router({
 
     const tickets = await ticketCaller.getAllByDate(inputDate);
     const movements = await movementsCaller.getAllByDate(inputDate);
+
+    const costCenterBalances = await balancesCaller.getCostCenterBalances(inputDate);
 
     await Promise.all(
       users.map(async (user) => {
@@ -191,6 +215,47 @@ export const balancesRouter = t.router({
       });
     });
 
-    return reports;
+    const workbook = new ExcelJS.Workbook();
+
+    reports?.forEach((report) => {
+      const sheet = workbook.addWorksheet(report.name ?? report.userId);
+      sheet.columns = sheetColumns;
+      sheet.addRows(report.tickets);
+      sheet.addRows(report.movements);
+
+      const referenceRow = sheet.rowCount;
+
+      sheet.getCell(`D${referenceRow + 3}`).value = "Totales";
+      sheet.getCell(`D${referenceRow + 4}`).value = "Saldo anterior";
+      sheet.getCell(`D${referenceRow + 5}`).value = "Caja asignada";
+      sheet.getCell(`D${referenceRow + 6}`).value = "Reposicion de caja";
+
+      sheet.getCell(`G${referenceRow + 3}`).value = {
+        formula: `SUM(G2:G${referenceRow + 1})`,
+        date1904: false,
+      };
+      sheet.getCell(`H${referenceRow + 3}`).value = {
+        formula: `SUM(H2:H${referenceRow + 1})`,
+        date1904: false,
+      };
+      sheet.getCell(`I${referenceRow + 3}`).value = {
+        formula: `SUM(G${referenceRow + 3},H${referenceRow + 3})`,
+        date1904: false,
+      };
+      sheet.getCell(`I${referenceRow + 4}`).value = report.prevBalance;
+      sheet.getCell(`I${referenceRow + 6}`).value = {
+        formula: `I${referenceRow + 5} - I${referenceRow + 4} - I${referenceRow + 3}`,
+        date1904: false,
+      };
+    });
+    const costCenterSheet = workbook.addWorksheet("Resumen de centros de costo");
+    costCenterSheet.columns = costCenterSheetColumns;
+    costCenterSheet.addRows(costCenterBalances ?? []);
+
+    await workbook.xlsx.writeFile("/tmp/report.xlsx");
+
+    const stream = readFileSync("/tmp/report.xlsx");
+
+    return { report: stream.toString("base64") };
   }),
 });
