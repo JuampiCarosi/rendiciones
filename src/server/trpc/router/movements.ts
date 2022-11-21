@@ -26,8 +26,6 @@ export const movementsRouter = t.router({
             toUser: ctx.session?.user?.id,
           },
           {
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            //@ts-ignore
             fromUser: ctx.session?.user?.isAdmin ? env.BANKER_ID : "",
           },
         ],
