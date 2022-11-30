@@ -82,4 +82,5 @@ model Movements {
   toUser        String
   pettyCashDate DateTime
   isFromBank    Boolean  @default(false)
+  madeBy        String
 }

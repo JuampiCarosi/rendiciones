@@ -10,6 +10,7 @@ export const movementsRouter = t.router({
       data: {
         ...input,
         pettyCashDate: getNextWednesday(new Date()),
+        madeBy: ctx.session?.user?.name ?? "usuario generico",
       },
     });
   }),
