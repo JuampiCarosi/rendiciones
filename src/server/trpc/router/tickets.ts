@@ -13,7 +13,7 @@ export const ticketsRouter = t.router({
     const ticketsOnPettyCash = await ctx.prisma.ticket.findMany({
       where: {
         userId: ctx.session?.user?.id,
-        // pettyCashDate: getNextWednesday(new Date()),
+        pettyCashDate: getNextWednesday(new Date()),
       },
     });
     const ticketId = ticketsOnPettyCash.length + 1;
