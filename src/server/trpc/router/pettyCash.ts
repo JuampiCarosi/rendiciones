@@ -30,7 +30,7 @@ export const pettyCashRouter = t.router({
     if (!pettyCashDates?.some((item) => item.date.getTime() === currentPettyCashDate.getTime())) {
       pettyCashDates.unshift(parsePettyCashDate(currentPettyCashDate));
     }
-    if (pettyCashDates.length > 5) {
+    if (pettyCashDates.length > 10) {
       return pettyCashDates.slice(0, 5);
     }
     return pettyCashDates;
