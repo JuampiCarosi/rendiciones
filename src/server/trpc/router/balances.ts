@@ -68,7 +68,7 @@ export const balancesRouter = t.router({
     .query(async ({ ctx, input }) => {
       let balance = 0;
       let date = input.date;
-      while (date.getTime() > new Date(2022, 9, 19).getTime()) {
+      while (date.getTime() > new Date(2022, 9, 18).getTime()) {
         const tickets = await ctx.prisma.ticket.findMany({
           where: {
             userId: input.userId ?? ctx.session?.user?.id,
