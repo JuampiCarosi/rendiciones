@@ -4,7 +4,7 @@ import { getNextWednesday, parsePettyCashDate } from "../../../utils/helpers";
 import { t } from "../trpc";
 import { ticketsRouter } from "./tickets";
 import { movementsRouter } from "./movements";
-import date from "date-and-time";
+import { addDays } from "date-and-time";
 import { costCenterTypes, Report } from "../../../shared/types";
 import ExcelJS from "exceljs";
 import { readFileSync } from "fs";
@@ -182,8 +182,10 @@ export const balancesRouter = t.router({
           userId: user.id,
           balance: (await balancesCaller.getPrevBalance({ userId: user.id, date: inputDate })) ?? 0,
           prevBalance:
-            (await balancesCaller.getPrevBalance({ userId: user.id, date: date.addDays(inputDate, -7) })) ??
-            0,
+            (await balancesCaller.getPrevBalance({
+              userId: user.id,
+              date: addDays(inputDate, -7),
+            })) ?? 0,
         };
         reports.push(report);
       })
