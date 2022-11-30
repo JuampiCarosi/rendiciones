@@ -8,6 +8,7 @@ declare module "next-auth" {
     user?: {
       id: string;
       isAdmin: boolean;
+      isEmployee: boolean;
     } & DefaultSession["user"];
   }
 }

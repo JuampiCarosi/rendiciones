@@ -49,6 +49,7 @@ model User {
   sessions      Session[]
   isAdmin       Boolean   @default(false)
   isBanker      Boolean   @default(false)
+  isEmployee    Boolean   @default(true)
 }
 
 model VerificationToken {

@@ -53,4 +53,13 @@ export const usersRouter = t.router({
     });
     return users.map((id) => id.id);
   }),
+  getEmployeesId: t.procedure.query(async ({ ctx }) => {
+    const users = await ctx.prisma.user.findMany({
+      where: {
+        isEmployee: true,
+      },
+      select: { id: true },
+    });
+    return users.map((id) => id.id);
+  }),
 });

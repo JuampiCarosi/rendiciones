@@ -9,6 +9,7 @@ import { costCenterTypes, Report } from "../../../shared/types";
 import ExcelJS from "exceljs";
 import { readFileSync } from "fs";
 import { env } from "../../../env/client.mjs";
+import { usersRouter } from "./users";
 
 const sheetColumns = [
   { header: "ID", key: "ticketId", width: 16 },
@@ -104,9 +105,14 @@ export const balancesRouter = t.router({
       return balance;
     }),
   getCostCenterBalances: t.procedure.input(z.date().optional()).query(async ({ ctx, input }) => {
+    const usersCaller = usersRouter.createCaller(ctx);
+
+    const employees = await usersCaller.getEmployeesId();
+
     const tickets = await ctx.prisma.ticket.findMany({
       where: {
         pettyCashDate: parsePettyCashDate(input ?? getNextWednesday(new Date())).date,
+        userId: { in: employees },
       },
     });
     const balances: { costCenter: CostCenter; amount: number }[] = [];
@@ -159,8 +165,7 @@ export const balancesRouter = t.router({
   generateReport: t.procedure.input(z.date()).mutation(async ({ ctx, input }) => {
     const inputDate = input ?? new Date(new Date().setDate(new Date().getDate() - 7));
     const users = (await ctx.prisma.user.findMany()).filter(
-      (user) =>
-        env.NEXT_PUBLIC_TEST_MODE === "true" || (user.isAdmin === false && user.name !== "Caja central")
+      (user) => env.NEXT_PUBLIC_TEST_MODE === "true" || user.isEmployee
     );
     const reports: Report = [];
     const balancesCaller = balancesRouter.createCaller(ctx);
