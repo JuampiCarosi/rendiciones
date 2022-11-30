@@ -21,9 +21,11 @@ export const usersRouter = t.router({
           {
             id: ctx.session?.user?.id,
           },
-          {
-            isBanker: true,
-          },
+          ctx.session?.user?.isAdmin
+            ? {
+                isBanker: true,
+              }
+            : {},
         ],
       },
       select: { name: true, id: true },
