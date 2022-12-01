@@ -59,6 +59,7 @@ const Home: NextPage = () => {
             <EditTicketModal
               show={showEditTicketModal}
               handleShow={handleShowEditTicketModal}
+              currentPettyCashDate={currentPettyCash}
               {...currentTicket}
             />
           )}

@@ -8,6 +8,7 @@ import { z } from "zod";
 import Button from "../Button";
 import ConfirmModal from "../ConfirmModal";
 import toast, { Toaster } from "react-hot-toast";
+import { getNextWednesday } from "../../utils/helpers";
 
 const ticketParamsVal = z.object({
   amount: z.number().positive(),
@@ -54,6 +55,7 @@ type Props = {
   invoiceType: string;
   expenseType: string;
   costCenter: string[];
+  currentPettyCashDate: Date;
 };
 
 const EditTicketModal = ({
@@ -66,6 +68,7 @@ const EditTicketModal = ({
   invoiceType,
   expenseType,
   costCenter,
+  currentPettyCashDate,
 }: Props) => {
   const utils = trpc.useContext();
   const [showConfirmModal, setShowConfirmModal] = useState(false);
@@ -127,6 +130,8 @@ const EditTicketModal = ({
   const errorMessage =
     clientErrorMessageArray.join("\n") || editTicketMutation.error?.shape?.customErrorMessage;
 
+  console.log(getNextWednesday(new Date()).getTime(), currentPettyCashDate.getTime());
+
   return (
     <>
       <Toaster position="top-center" reverseOrder={false} />
@@ -180,7 +185,8 @@ const EditTicketModal = ({
                   ) : (
                     <Button
                       label="Editar"
-                      className="bg-slate-500 px-4"
+                      className=" px-4"
+                      disabled={getNextWednesday(new Date()).getTime() !== currentPettyCashDate.getTime()}
                       onClick={() => {
                         setIsEditing(true);
                         reset();
