@@ -8,6 +8,7 @@ import { z } from "zod";
 import Button from "../Button";
 import ConfirmModal from "../ConfirmModal";
 import toast, { Toaster } from "react-hot-toast";
+import dateAndTime from "date-and-time";
 import { getNextWednesday } from "../../utils/helpers";
 
 const ticketParamsVal = z.object({
@@ -130,8 +131,6 @@ const EditTicketModal = ({
   const errorMessage =
     clientErrorMessageArray.join("\n") || editTicketMutation.error?.shape?.customErrorMessage;
 
-  console.log(getNextWednesday(new Date()).getTime(), currentPettyCashDate.getTime());
-
   return (
     <>
       <Toaster position="top-center" reverseOrder={false} />
@@ -186,7 +185,10 @@ const EditTicketModal = ({
                     <Button
                       label="Editar"
                       className=" px-4"
-                      disabled={getNextWednesday(new Date()).getTime() !== currentPettyCashDate.getTime()}
+                      disabled={
+                        getNextWednesday(new Date()).getTime() !==
+                        getNextWednesday(currentPettyCashDate).getTime()
+                      }
                       onClick={() => {
                         setIsEditing(true);
                         reset();
