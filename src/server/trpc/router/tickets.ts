@@ -38,10 +38,12 @@ export const ticketsRouter = t.router({
         ticketId: "desc",
       },
     });
-    return tickets.map((ticket) => ({
-      ...ticket,
-      costCenter: JSON.parse(ticket.costCenter) as string[],
-    }));
+    return tickets.map((ticket) => {
+      return {
+        ...ticket,
+        costCenter: ticket.costCenter.split(","),
+      };
+    });
   }),
   getAllByDate: t.procedure.input(z.date()).query(async ({ ctx, input }) => {
     const tickets = await ctx.prisma.ticket.findMany({
@@ -54,7 +56,7 @@ export const ticketsRouter = t.router({
     });
     return tickets.map((ticket) => ({
       ...ticket,
-      costCenter: JSON.parse(ticket.costCenter) as string[],
+      costCenter: ticket.costCenter.split(","),
     }));
   }),
   getById: t.procedure.input(z.string()).query(async ({ ctx, input }) => {
@@ -66,7 +68,7 @@ export const ticketsRouter = t.router({
     if (!ticket) return null;
     return {
       ...ticket,
-      costCenter: JSON.parse(ticket.costCenter),
+      costCenter: ticket.costCenter.split(","),
     };
   }),
   editTicket: t.procedure.input(editTicketsVal).mutation(async ({ input, ctx }) => {

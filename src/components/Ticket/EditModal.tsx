@@ -8,7 +8,6 @@ import { z } from "zod";
 import Button from "../Button";
 import ConfirmModal from "../ConfirmModal";
 import toast, { Toaster } from "react-hot-toast";
-import dateAndTime from "date-and-time";
 import { getNextWednesday } from "../../utils/helpers";
 
 const ticketParamsVal = z.object({
@@ -75,7 +74,7 @@ const EditTicketModal = ({
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const deletedTicketToast = () => toast.success("Ticket eliminado correctamente.");
-  const [selectedCostCenters, setSelectedCostCenter] = useState<string[]>([]);
+  const [selectedCostCenters, setSelectedCostCenter] = useState<string[]>(costCenter);
 
   const handleShowConfirmModal = (show: boolean) => {
     setShowConfirmModal(show);
@@ -110,14 +109,14 @@ const EditTicketModal = ({
   });
 
   const onSubmit = handleSubmitVal((props) => {
-    const { amount, description, invoiceDate, invoiceType, expenseType, costCenter } = props;
+    const { amount, description, invoiceDate, invoiceType, expenseType } = props;
     editTicketMutation.mutate({
       amount: Number(amount),
       description,
       invoiceDate: new Date(invoiceDate),
       invoiceType,
       expenseType,
-      costCenter,
+      costCenter: selectedCostCenters.join(","),
       id,
     });
     handleShow(false);
@@ -247,7 +246,7 @@ const EditTicketModal = ({
                   name="costCenter"
                   selectedItems={selectedCostCenters}
                   setSelectedItems={setSelectedCostCenter}
-                  disabled={true}
+                  disabled={!isEditing}
                 />
 
                 <SelectInput
