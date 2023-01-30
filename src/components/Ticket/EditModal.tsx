@@ -49,18 +49,21 @@ type ErrorMessageKeys = keyof typeof errorMessages;
 type Props = {
   handleShow: (show: boolean) => void;
   show: boolean;
-  ticket: Ticket;
+  ticketId: string;
   currentPettyCashDate: Date;
+  tickets: Ticket[] | undefined;
 };
 
-const EditTicketModal = ({ handleShow, show, ticket, currentPettyCashDate }: Props) => {
-  const { id, amount, description, invoiceDate, invoiceType, expenseType, costCenter } = ticket;
+const EditTicketModal = ({ handleShow, show, ticketId, tickets, currentPettyCashDate }: Props) => {
+  const ticket = tickets?.find((t) => t.id === ticketId);
 
   const utils = trpc.useContext();
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const deletedTicketToast = () => toast.success("Ticket eliminado correctamente.");
-  const [selectedCostCenters, setSelectedCostCenter] = useState<string[]>(JSON.parse(costCenter));
+  const [selectedCostCenters, setSelectedCostCenter] = useState<string[] | null>(
+    JSON.parse(ticket?.costCenter ?? "null")
+  );
 
   const handleShowConfirmModal = (show: boolean) => {
     setShowConfirmModal(show);
@@ -94,6 +97,8 @@ const EditTicketModal = ({ handleShow, show, ticket, currentPettyCashDate }: Pro
     },
   });
 
+  if (!ticket) return null;
+
   const onSubmit = handleSubmitVal((props) => {
     const { amount, description, invoiceDate, invoiceType, expenseType } = props;
     editTicketMutation.mutate({
@@ -103,7 +108,7 @@ const EditTicketModal = ({ handleShow, show, ticket, currentPettyCashDate }: Pro
       invoiceType,
       expenseType,
       costCenter: JSON.stringify(selectedCostCenters),
-      id,
+      id: ticket.id,
     });
     handleShow(false);
     setIsEditing(false);
@@ -127,7 +132,7 @@ const EditTicketModal = ({ handleShow, show, ticket, currentPettyCashDate }: Pro
         onConfirm={() => {
           handleShow(false);
           handleShowConfirmModal(false);
-          deleteTicketMutation.mutate(id);
+          deleteTicketMutation.mutate(ticket.id);
         }}
       />
       {show && <div className="fixed inset-0 z-20 bg-black/30 transition-opacity" aria-hidden="true"></div>}
@@ -194,7 +199,7 @@ const EditTicketModal = ({ handleShow, show, ticket, currentPettyCashDate }: Pro
                   data={invoiceTypes}
                   name="invoiceType"
                   register={register}
-                  value={invoiceType}
+                  value={ticket.invoiceType}
                   disabled={!isEditing}
                   required
                 />
@@ -204,7 +209,7 @@ const EditTicketModal = ({ handleShow, show, ticket, currentPettyCashDate }: Pro
                   required
                   label="Descripcion"
                   name="description"
-                  value={description}
+                  value={ticket.description}
                   disabled={!isEditing}
                 />
                 <Input
@@ -213,7 +218,7 @@ const EditTicketModal = ({ handleShow, show, ticket, currentPettyCashDate }: Pro
                   label="Monto"
                   type="number"
                   name="amount"
-                  value={amount.toString()}
+                  value={ticket.amount.toString()}
                   disabled={!isEditing}
                 />
                 <Input
@@ -222,7 +227,7 @@ const EditTicketModal = ({ handleShow, show, ticket, currentPettyCashDate }: Pro
                   label="Fecha del ticket"
                   type="date"
                   name="invoiceDate"
-                  value={invoiceDate.toLocaleDateString("en-CA")}
+                  value={ticket.invoiceDate.toLocaleDateString("en-CA")}
                   disabled={!isEditing}
                 />
 
@@ -241,7 +246,7 @@ const EditTicketModal = ({ handleShow, show, ticket, currentPettyCashDate }: Pro
                   name="expenseType"
                   register={register}
                   required
-                  value={expenseType}
+                  value={ticket.expenseType}
                   disabled={!isEditing}
                 />
 
