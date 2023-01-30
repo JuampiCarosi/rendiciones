@@ -49,7 +49,7 @@ type ErrorMessageKeys = keyof typeof errorMessages;
 type Props = {
   handleShow: (show: boolean) => void;
   show: boolean;
-  ticketId: string;
+  ticketId: string | null;
   currentPettyCashDate: Date;
   tickets: Ticket[] | undefined;
 };
