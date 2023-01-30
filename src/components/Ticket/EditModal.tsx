@@ -9,6 +9,7 @@ import Button from "../Button";
 import ConfirmModal from "../ConfirmModal";
 import toast, { Toaster } from "react-hot-toast";
 import { getNextWednesday } from "../../utils/helpers";
+import { Ticket } from "@prisma/client";
 
 const ticketParamsVal = z.object({
   amount: z.number().positive(),
@@ -48,28 +49,13 @@ type ErrorMessageKeys = keyof typeof errorMessages;
 type Props = {
   handleShow: (show: boolean) => void;
   show: boolean;
-  id: string;
-  amount: number;
-  description: string;
-  invoiceDate: Date;
-  invoiceType: string;
-  expenseType: string;
-  costCenter: string;
+  ticket: Ticket;
   currentPettyCashDate: Date;
 };
 
-const EditTicketModal = ({
-  handleShow,
-  show,
-  id,
-  amount,
-  description,
-  invoiceDate,
-  invoiceType,
-  expenseType,
-  costCenter,
-  currentPettyCashDate,
-}: Props) => {
+const EditTicketModal = ({ handleShow, show, ticket, currentPettyCashDate }: Props) => {
+  const { id, amount, description, invoiceDate, invoiceType, expenseType, costCenter } = ticket;
+
   const utils = trpc.useContext();
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
@@ -244,7 +230,7 @@ const EditTicketModal = ({
                   label="Centro de costos"
                   data={costCenterTypes}
                   name="costCenter"
-                  selectedItems={selectedCostCenters}
+                  selectedItems={selectedCostCenters ?? []}
                   setSelectedItems={setSelectedCostCenter}
                   disabled={!isEditing}
                 />

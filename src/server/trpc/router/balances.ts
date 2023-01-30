@@ -199,7 +199,6 @@ export const balancesRouter = t.router({
       if (report) {
         report.tickets.push({
           ...ticket,
-          costCenter: ticket.costCenter.join(", "),
           cashOut: ticket.amount * -1,
           cashIn: 0,
         });

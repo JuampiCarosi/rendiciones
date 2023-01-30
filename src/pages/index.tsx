@@ -3,7 +3,7 @@ import { unstable_getServerSession } from "next-auth";
 import { authOptions } from "./api/auth/[...nextauth]";
 import Top from "../components/Top";
 import TicketModal from "../components/Ticket/Modal";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import EntryModal from "../components/Movement/Modal";
 import { trpc } from "../utils/trpc";
@@ -12,18 +12,18 @@ import MovementCard from "../components/Movement/Card";
 import Bottom from "../components/Bottom";
 import EditTicketModal from "../components/Ticket/EditModal";
 import { getNextWednesday } from "../utils/helpers";
-import { ParsedTicket } from "../shared/types";
+import { Ticket } from "@prisma/client";
 
 const Home: NextPage = () => {
   const [showTicketModal, setShowTicketModal] = useState(false);
   const [showEntryModal, setShowEntryModal] = useState(false);
   const [currentPettyCash, setCurrentPettyCash] = useState<Date>(getNextWednesday(new Date()));
   const [showEditTicketModal, setShowEditTicketModal] = useState(false);
-  const [currentTicket, setCurrentTicket] = useState<ParsedTicket>();
+  const [currentTicket, setCurrentTicket] = useState<Ticket | null>(null);
   const utils = trpc.useContext();
 
-  const { data: movements } = trpc.movements.getByDate.useQuery(currentPettyCash);
-  const { data: tickets } = trpc.tickets.getByDate.useQuery(currentPettyCash);
+  const { data: movements } = trpc.movements.getByDate.useQuery(currentPettyCash, { keepPreviousData: true });
+  const { data: tickets } = trpc.tickets.getByDate.useQuery(currentPettyCash, { keepPreviousData: true });
 
   const handleShowTicketModal = (value: boolean) => {
     setShowTicketModal(value);
@@ -35,12 +35,16 @@ const Home: NextPage = () => {
 
   const handleShowEditTicketModal = (value: boolean) => {
     setShowEditTicketModal(value);
+    if (!value) setCurrentTicket(null);
   };
 
-  const handleEditTicket = (ticket: ParsedTicket) => {
-    setShowEditTicketModal(true);
+  const handleEditTicket = (ticket: Ticket) => {
     setCurrentTicket(ticket);
+    setShowEditTicketModal(currentTicket !== null);
   };
+
+  // useEffect(() => {
+  // }, [currentTicket]);
 
   const updateCurrentPettyCash = (date: Date) => {
     setCurrentPettyCash(date);
@@ -60,7 +64,7 @@ const Home: NextPage = () => {
               show={showEditTicketModal}
               handleShow={handleShowEditTicketModal}
               currentPettyCashDate={currentPettyCash}
-              {...currentTicket}
+              ticket={currentTicket}
             />
           )}
           <div className="h-12"></div>
