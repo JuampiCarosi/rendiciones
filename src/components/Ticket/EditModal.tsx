@@ -54,7 +54,7 @@ type Props = {
   invoiceDate: Date;
   invoiceType: string;
   expenseType: string;
-  costCenter: string[];
+  costCenter: string;
   currentPettyCashDate: Date;
 };
 
@@ -74,7 +74,7 @@ const EditTicketModal = ({
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const deletedTicketToast = () => toast.success("Ticket eliminado correctamente.");
-  const [selectedCostCenters, setSelectedCostCenter] = useState<string[]>(costCenter);
+  const [selectedCostCenters, setSelectedCostCenter] = useState<string[]>(JSON.parse(costCenter));
 
   const handleShowConfirmModal = (show: boolean) => {
     setShowConfirmModal(show);
@@ -116,7 +116,7 @@ const EditTicketModal = ({
       invoiceDate: new Date(invoiceDate),
       invoiceType,
       expenseType,
-      costCenter: selectedCostCenters.join(","),
+      costCenter: JSON.stringify(selectedCostCenters),
       id,
     });
     handleShow(false);
