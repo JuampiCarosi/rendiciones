@@ -1,6 +1,6 @@
 import Input, { MultipleSelectInput, SelectInput } from "../Input";
 import { useForm } from "react-hook-form";
-import { Fragment, useState } from "react";
+import { Fragment, memo, useState } from "react";
 import { trpc } from "../../utils/trpc";
 import { Dialog, Transition } from "@headlessui/react";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -54,7 +54,13 @@ type Props = {
   tickets: Ticket[] | undefined;
 };
 
-const EditTicketModal = ({ handleShow, show, ticketId, tickets, currentPettyCashDate }: Props) => {
+const EditTicketModal = memo(function EditTicketModal({
+  handleShow,
+  show,
+  ticketId,
+  tickets,
+  currentPettyCashDate,
+}: Props) {
   const ticket = tickets?.find((t) => t.id === ticketId);
 
   const utils = trpc.useContext();
@@ -279,6 +285,6 @@ const EditTicketModal = ({ handleShow, show, ticketId, tickets, currentPettyCash
       </Transition>
     </>
   );
-};
+});
 
 export default EditTicketModal;

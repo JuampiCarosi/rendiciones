@@ -1,5 +1,5 @@
 import { Movements, Ticket } from "@prisma/client";
-import { useEffect, useState } from "react";
+import { memo, useEffect, useState } from "react";
 import MovementCard from "./Movement/Card";
 
 import TicketCard from "./Ticket/Card";
@@ -11,7 +11,7 @@ type CarouselProps = {
   movements: Movements[] | undefined;
 };
 
-const Carousel = ({ currentPettyCash, tickets, movements }: CarouselProps) => {
+const Carousel = memo(function Carousel({ currentPettyCash, tickets, movements }: CarouselProps) {
   const [currentTicket, setCurrentTicket] = useState<string | null>(null);
   const [showEditTicketModal, setShowEditTicketModal] = useState(false);
 
@@ -52,6 +52,6 @@ const Carousel = ({ currentPettyCash, tickets, movements }: CarouselProps) => {
       {movements && movements.map((movement, i) => <MovementCard key={i} movement={movement} />)}
     </div>
   );
-};
+});
 
 export default Carousel;
