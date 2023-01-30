@@ -1,5 +1,5 @@
 import { Ticket } from "@prisma/client";
-import React from "react";
+import React, { memo } from "react";
 import { expenseTypes } from "../../shared/types";
 
 type TicketCardProps = {
@@ -16,7 +16,7 @@ const expenseTypeColors = {
 
 const formatoPesos = new Intl.NumberFormat("es-AR");
 
-const TicketCard = ({ ticket, onClick }: TicketCardProps) => {
+const TicketCard = memo(function TicketCard({ ticket, onClick }: TicketCardProps) {
   const expenseType = ticket.expenseType as expenseTypes;
 
   return (
@@ -38,6 +38,6 @@ const TicketCard = ({ ticket, onClick }: TicketCardProps) => {
       </div>
     </div>
   );
-};
+});
 
 export default TicketCard;
