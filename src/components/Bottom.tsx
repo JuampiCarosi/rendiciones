@@ -1,7 +1,3 @@
-import Button from "./Button";
-import { FiPlus } from "react-icons/fi";
-import { TbReportMoney } from "react-icons/tb";
-
 type BottomParams = {
   handleShowTicketModal: (value: boolean) => void;
   handleShowEntryModal: (value: boolean) => void;
