@@ -61,7 +61,7 @@ const Input = (props: InputProps) => {
     <div className="grid gap-1">
       <label className="text-sm text-gray-600">{label}</label>
       <input
-        className={`h-10 rounded-lg border-gray-300 font-light text-gray-800 ${
+        className={`h-10 w-full rounded-lg border-gray-300 font-light text-gray-800 ${
           disabled ? "bg-slate-100" : ""
         } focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50`}
         type={type}
