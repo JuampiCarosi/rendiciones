@@ -143,11 +143,11 @@ export const MultipleSelectInput = (props: MultipleSelectInputProps) => {
         >
           {selectedItems.length > 0 ? selectedItems.map((item) => item).join(", ") : "------"}
         </Listbox.Button>
-        <Listbox.Options className=" w-full overflow-auto rounded-md bg-slate-50 pt-1  text-lg font-light shadow-md ring-1 ring-black ring-opacity-5 focus:outline-none ">
+        <Listbox.Options className=" w-full overflow-auto rounded-md  pt-1  text-lg font-light shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none ">
           {data.map((item) => {
             return (
               <Listbox.Option
-                className="cursor-pointer border-b py-0.5 pl-3 hover:bg-slate-100"
+                className="cursor-pointer border-b py-0.5 pl-3 hover:bg-gray-50"
                 key={item}
                 value={item}
               >
