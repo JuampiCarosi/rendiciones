@@ -143,10 +143,14 @@ export const MultipleSelectInput = (props: MultipleSelectInputProps) => {
         >
           {selectedItems.length > 0 ? selectedItems.map((item) => item).join(", ") : "------"}
         </Listbox.Button>
-        <Listbox.Options className=" w-full overflow-auto rounded-md py-1 pl-3 text-base shadow-md ring-1 ring-black ring-opacity-5 focus:outline-none ">
+        <Listbox.Options className=" w-full overflow-auto rounded-md bg-slate-50 pt-1  text-lg font-light shadow-md ring-1 ring-black ring-opacity-5 focus:outline-none ">
           {data.map((item) => {
             return (
-              <Listbox.Option key={item} value={item}>
+              <Listbox.Option
+                className="cursor-pointer border-b py-0.5 pl-3 hover:bg-slate-100"
+                key={item}
+                value={item}
+              >
                 {({ selected }) => (
                   <div className="flex">
                     <span className={`block truncate ${selected ? "font-semibold" : ""}`}>{item}</span>
