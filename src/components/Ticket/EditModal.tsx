@@ -1,6 +1,6 @@
 import Input, { MultipleSelectInput, SelectInput } from "../Input";
 import { useForm } from "react-hook-form";
-import { Fragment, memo, useState } from "react";
+import { Fragment, memo, useEffect, useState } from "react";
 import { trpc } from "../../utils/trpc";
 import { Dialog, Transition } from "@headlessui/react";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -66,9 +66,11 @@ const EditTicketModal = memo(function EditTicketModal({
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const deletedTicketToast = () => toast.success("Ticket eliminado correctamente.");
-  const [selectedCostCenters, setSelectedCostCenter] = useState<string[] | null>(
-    JSON.parse(ticket?.costCenter ?? "null")
-  );
+  const [selectedCostCenters, setSelectedCostCenter] = useState<string[] | null>(null);
+
+  useEffect(() => {
+    if (ticket) setSelectedCostCenter(JSON.parse(ticket.costCenter));
+  }, [ticket]);
 
   const handleShowConfirmModal = (show: boolean) => {
     setShowConfirmModal(show);
@@ -102,19 +104,18 @@ const EditTicketModal = memo(function EditTicketModal({
     },
   });
 
-  if (!ticket) return null;
-
   const onSubmit = handleSubmitVal((props) => {
     const { amount, description, invoiceDate, invoiceType, expenseType } = props;
-    editTicketMutation.mutate({
-      amount: Number(amount),
-      description,
-      invoiceDate: new Date(invoiceDate),
-      invoiceType,
-      expenseType,
-      costCenter: JSON.stringify(selectedCostCenters),
-      id: ticket.id,
-    });
+    if (ticket)
+      editTicketMutation.mutate({
+        amount: Number(amount),
+        description,
+        invoiceDate: new Date(invoiceDate),
+        invoiceType,
+        expenseType,
+        costCenter: JSON.stringify(selectedCostCenters),
+        id: ticket.id,
+      });
     handleShow(false);
     setIsEditing(false);
   });
@@ -137,7 +138,7 @@ const EditTicketModal = memo(function EditTicketModal({
         onConfirm={() => {
           handleShow(false);
           handleShowConfirmModal(false);
-          deleteTicketMutation.mutate(ticket.id);
+          if (ticket) deleteTicketMutation.mutate(ticket.id);
         }}
       />
       {show && <div className="fixed inset-0 z-20 bg-black/30 transition-opacity" aria-hidden="true"></div>}
@@ -201,7 +202,7 @@ const EditTicketModal = memo(function EditTicketModal({
                   data={invoiceTypes}
                   name="invoiceType"
                   register={register}
-                  value={ticket.invoiceType}
+                  value={ticket?.invoiceType}
                   disabled={!isEditing}
                   required
                 />
@@ -211,7 +212,7 @@ const EditTicketModal = memo(function EditTicketModal({
                   required
                   label="Descripcion"
                   name="description"
-                  value={ticket.description}
+                  value={ticket?.description}
                   disabled={!isEditing}
                 />
                 <Input
@@ -220,7 +221,7 @@ const EditTicketModal = memo(function EditTicketModal({
                   label="Monto"
                   type="number"
                   name="amount"
-                  value={ticket.amount.toString()}
+                  value={ticket?.amount.toString()}
                   disabled={!isEditing}
                 />
                 <Input
@@ -229,7 +230,7 @@ const EditTicketModal = memo(function EditTicketModal({
                   label="Fecha del ticket"
                   type="date"
                   name="invoiceDate"
-                  value={ticket.invoiceDate.toLocaleDateString("en-CA")}
+                  value={ticket?.invoiceDate.toLocaleDateString("en-CA")}
                   disabled={!isEditing}
                 />
 
@@ -248,7 +249,7 @@ const EditTicketModal = memo(function EditTicketModal({
                   name="expenseType"
                   register={register}
                   required
-                  value={ticket.expenseType}
+                  value={ticket?.expenseType}
                   disabled={!isEditing}
                 />
 
