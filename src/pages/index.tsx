@@ -17,9 +17,6 @@ const Home: NextPage = () => {
   const [currentPettyCash, setCurrentPettyCash] = useState<Date>(getNextWednesday(new Date()));
   const utils = trpc.useContext();
 
-  const { data: movements } = trpc.movements.getByDate.useQuery(currentPettyCash, { keepPreviousData: true });
-  const { data: tickets } = trpc.tickets.getByDate.useQuery(currentPettyCash, { keepPreviousData: true });
-
   const handleShowTicketModal = (value: boolean) => {
     setShowTicketModal(value);
   };
@@ -40,7 +37,7 @@ const Home: NextPage = () => {
       <div className="w-full grow overflow-scroll pt-2">
         <TicketModal show={showTicketModal} handleShow={handleShowTicketModal} />
         <EntryModal show={showEntryModal} handleShow={handleShowEntryModal} />
-        <Carousel currentPettyCash={currentPettyCash} movements={movements} tickets={tickets} />
+        <Carousel currentPettyCash={currentPettyCash} />
       </div>
       <Bottom handleShowEntryModal={handleShowEntryModal} handleShowTicketModal={handleShowTicketModal} />
     </div>

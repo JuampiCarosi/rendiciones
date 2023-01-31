@@ -8,7 +8,6 @@ import { z } from "zod";
 import Button from "../Button";
 import ConfirmModal from "../ConfirmModal";
 import toast, { Toaster } from "react-hot-toast";
-import { getNextWednesday } from "../../utils/helpers";
 import { Ticket } from "@prisma/client";
 
 const ticketParamsVal = z.object({
@@ -50,7 +49,7 @@ type Props = {
   handleShow: (show: boolean) => void;
   show: boolean;
   ticketId: string | null;
-  currentPettyCashDate: Date;
+  readOnly: boolean;
   tickets: Ticket[] | undefined;
 };
 
@@ -59,7 +58,7 @@ const EditTicketModal = memo(function EditTicketModal({
   show,
   ticketId,
   tickets,
-  currentPettyCashDate,
+  readOnly,
 }: Props) {
   const ticket = tickets?.find((t) => t.id === ticketId);
 
@@ -181,10 +180,7 @@ const EditTicketModal = memo(function EditTicketModal({
                     <Button
                       label="Editar"
                       className=" px-4"
-                      disabled={
-                        getNextWednesday(new Date()).getTime() !==
-                        getNextWednesday(currentPettyCashDate).getTime()
-                      }
+                      disabled={readOnly}
                       onClick={() => {
                         setIsEditing(true);
                         reset();

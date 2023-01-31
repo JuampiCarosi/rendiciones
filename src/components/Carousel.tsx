@@ -1,32 +1,29 @@
-import { Movements, Ticket } from "@prisma/client";
-import { memo, useEffect, useState } from "react";
+import { memo, useEffect, useMemo, useState } from "react";
+import { trpc } from "../utils/trpc";
 import MovementCard from "./Movement/Card";
 
 import TicketCard from "./Ticket/Card";
 import EditTicketModal from "./Ticket/EditModal";
 
-type CarouselProps = {
-  currentPettyCash: Date;
-  tickets: Ticket[] | undefined;
-  movements: Movements[] | undefined;
-};
-
-const Carousel = memo(function Carousel({ currentPettyCash, tickets, movements }: CarouselProps) {
+const Carousel = memo(function Carousel({ currentPettyCash }: { currentPettyCash: Date }) {
   const [currentTicket, setCurrentTicket] = useState<string | null>(null);
   const [showEditTicketModal, setShowEditTicketModal] = useState(false);
+
+  const { data: movements } = trpc.movements.getByDate.useQuery(currentPettyCash);
+  const { data: tickets } = trpc.tickets.getByDate.useQuery(currentPettyCash);
 
   const handleShowEditTicketModal = (value: boolean) => {
     setShowEditTicketModal(value);
     if (!value) setCurrentTicket(null);
   };
 
-  const handleEditTicket = (ticketId: string) => {
-    setCurrentTicket(ticketId);
-  };
-
   useEffect(() => {
     setShowEditTicketModal(currentTicket !== null);
   }, [currentTicket]);
+
+  const isAllowedToEdit = useMemo(() => {
+    return !currentPettyCash || currentPettyCash >= new Date();
+  }, [currentPettyCash]);
 
   return (
     <div className="m-auto max-w-lg">
@@ -34,7 +31,7 @@ const Carousel = memo(function Carousel({ currentPettyCash, tickets, movements }
         <EditTicketModal
           show={showEditTicketModal}
           handleShow={handleShowEditTicketModal}
-          currentPettyCashDate={currentPettyCash}
+          readOnly={!isAllowedToEdit}
           ticketId={currentTicket}
           tickets={tickets}
         />
@@ -47,7 +44,7 @@ const Carousel = memo(function Carousel({ currentPettyCash, tickets, movements }
       )}
       {tickets &&
         tickets.map((ticket, i) => (
-          <TicketCard key={i} ticket={ticket} onClick={() => handleEditTicket(ticket.id)} />
+          <TicketCard key={i} ticket={ticket} onClick={() => setCurrentTicket(ticket.id)} />
         ))}
       {movements && movements.map((movement, i) => <MovementCard key={i} movement={movement} />)}
     </div>
