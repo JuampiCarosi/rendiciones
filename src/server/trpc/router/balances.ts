@@ -201,6 +201,7 @@ export const balancesRouter = t.router({
         report.tickets.push({
           ...ticket,
           cashOut: ticket.amount * -1,
+          costCenter: pareStringifiedArray(ticket.costCenter),
           cashIn: 0,
         });
       }
@@ -279,3 +280,7 @@ export const balancesRouter = t.router({
     return { report: stream.toString("base64") };
   }),
 });
+
+function pareStringifiedArray(stringifiedArray: string) {
+  return stringifiedArray.replaceAll('"', "").replaceAll("[", "").replaceAll("]", "").replaceAll(",", ", ");
+}
