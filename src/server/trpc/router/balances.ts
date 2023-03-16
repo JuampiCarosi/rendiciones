@@ -171,6 +171,7 @@ export const balancesRouter = t.router({
     const balancesCaller = balancesRouter.createCaller(ctx);
     const ticketCaller = ticketsRouter.createCaller(ctx);
     const movementsCaller = movementsRouter.createCaller(ctx);
+    const usersCaller = usersRouter.createCaller(ctx);
 
     const tickets = await ticketCaller.getAllByDate(inputDate);
     const movements = await movementsCaller.getAllByDate(inputDate);
@@ -205,16 +206,20 @@ export const balancesRouter = t.router({
       }
     });
 
-    movements.forEach((movement) => {
+    for (const movement of movements) {
       const affectedReports = reports.filter((r) => {
         return r.userId === movement.fromUser || r.userId === movement.toUser;
       });
+
+      const toUserName = (await usersCaller.getById(movement.toUser))?.name;
+      const fromUserName = (await usersCaller.getById(movement.fromUser))?.name;
 
       affectedReports.forEach((report) => {
         if (report.userId === movement.fromUser) {
           report.movements.push({
             ...movement,
             invoiceDate: movement.date,
+            costCenter: toUserName ?? "",
             cashOut: movement.amount * -1,
             cashIn: 0,
           });
@@ -224,10 +229,11 @@ export const balancesRouter = t.router({
             invoiceDate: movement.date,
             cashOut: 0,
             cashIn: movement.amount,
+            costCenter: fromUserName ?? "",
           });
         }
       });
-    });
+    }
 
     const workbook = new ExcelJS.Workbook();
 
