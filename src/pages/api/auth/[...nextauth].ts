@@ -29,11 +29,8 @@ export const authOptions: NextAuthOptions = {
       if (env.NEXTAUTH_TEST_MODE === "true") return true;
 
       return Boolean(
-        (account.provider === "google" &&
-          profile.email &&
-          profile.email_verified &&
-          profile.email.endsWith("@cldproyectos.com")) ||
-          allowedEmails?.includes(profile.email || "")
+        (account?.provider === "google" && profile?.email && profile.email.endsWith("@cldproyectos.com")) ||
+          allowedEmails?.includes(profile?.email || "")
       );
     },
   },
