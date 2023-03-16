@@ -9,13 +9,16 @@ const Carousel = memo(function Carousel({ currentPettyCash }: { currentPettyCash
   const [currentTicket, setCurrentTicket] = useState<string | null>(null);
   const [showEditTicketModal, setShowEditTicketModal] = useState(false);
 
-  const { data: movements } = trpc.movements.getByDate.useQuery(currentPettyCash);
-  const { data: tickets } = trpc.tickets.getByDate.useQuery(currentPettyCash);
+  const { data: movements, isLoading: areMovementsLoading } =
+    trpc.movements.getByDate.useQuery(currentPettyCash);
+  const { data: tickets, isLoading: areTicketLoading } = trpc.tickets.getByDate.useQuery(currentPettyCash);
 
   const handleTicketClick = (ticketId: string) => {
     setShowEditTicketModal(true);
     setCurrentTicket(ticketId);
   };
+
+  console.log(areMovementsLoading, areTicketLoading);
 
   const isAllowedToEdit = useMemo(() => {
     return !currentPettyCash || currentPettyCash >= new Date();
@@ -31,18 +34,24 @@ const Carousel = memo(function Carousel({ currentPettyCash }: { currentPettyCash
         ticketId={currentTicket}
         tickets={tickets}
       />
-      {/* )} */}
-      <div className="h-12"></div>
-      {tickets?.length === 0 && movements?.length === 0 && (
-        <div className="flex justify-center py-3">
-          <h3 className=" text-slate-400">No hay movimientos en esta caja</h3>
-        </div>
+      {areMovementsLoading && areTicketLoading ? (
+        <div>Cargando Tickets y Movimientos...</div>
+      ) : (
+        <>
+          {" "}
+          <div className="h-12"></div>
+          {tickets?.length === 0 && movements?.length === 0 && (
+            <div className="flex justify-center py-3">
+              <h3 className=" text-slate-400">No hay movimientos en esta caja</h3>
+            </div>
+          )}
+          {tickets &&
+            tickets.map((ticket, i) => (
+              <TicketCard key={i} ticket={ticket} onClick={() => handleTicketClick(ticket.id)} />
+            ))}
+          {movements && movements.map((movement, i) => <MovementCard key={i} movement={movement} />)}
+        </>
       )}
-      {tickets &&
-        tickets.map((ticket, i) => (
-          <TicketCard key={i} ticket={ticket} onClick={() => handleTicketClick(ticket.id)} />
-        ))}
-      {movements && movements.map((movement, i) => <MovementCard key={i} movement={movement} />)}
     </div>
   );
 });

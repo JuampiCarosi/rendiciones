@@ -212,9 +212,19 @@ export const balancesRouter = t.router({
 
       affectedReports.forEach((report) => {
         if (report.userId === movement.fromUser) {
-          report.movements.push({ ...movement, cashOut: movement.amount * -1, cashIn: 0 });
+          report.movements.push({
+            ...movement,
+            invoiceDate: movement.date,
+            cashOut: movement.amount * -1,
+            cashIn: 0,
+          });
         } else {
-          report.movements.push({ ...movement, cashOut: 0, cashIn: movement.amount });
+          report.movements.push({
+            ...movement,
+            invoiceDate: movement.date,
+            cashOut: 0,
+            cashIn: movement.amount,
+          });
         }
       });
     });

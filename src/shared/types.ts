@@ -33,7 +33,7 @@ export const costCenterTypes = [
 ] as const;
 
 type ExcelTicket = Omit<Ticket, " amount"> & { cashOut: number; cashIn: number };
-type ExcelMovement = Omit<Movements, "amount"> & { cashOut: number; cashIn: number };
+type ExcelMovement = Omit<Movements, "amount"> & { cashOut: number; cashIn: number; invoiceDate: Date };
 
 export type Report = Array<{
   userId: string;
