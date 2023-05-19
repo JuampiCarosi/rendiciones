@@ -30,6 +30,7 @@ export const costCenterTypes = [
   "LEON",
   "CAMP",
   "INCHU",
+  "HUDS",
 ] as const;
 
 type ExcelTicket = Omit<Ticket, " amount"> & { cashOut: number; cashIn: number };

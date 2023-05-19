@@ -9,6 +9,7 @@ import Button from "../Button";
 import ConfirmModal from "../ConfirmModal";
 import toast, { Toaster } from "react-hot-toast";
 import { Ticket } from "@prisma/client";
+import { costCenterTypes } from "../../shared/types";
 
 const ticketParamsVal = z.object({
   amount: z.number().positive(),
@@ -31,8 +32,6 @@ const expenseTypes = [
   { value: "peajes", label: "Peajes" },
   { value: "otros", label: "Otros" },
 ];
-
-const costCenterTypes = ["GRA", "GSP", "PICC", "BOAT", "MIGUE", "AGPA", "LEON", "CAMP", "INCHU"];
 
 const errorMessages = {
   invoiceType: "tipo de factura",
@@ -236,7 +235,7 @@ const EditTicketModal = memo(function EditTicketModal({
 
                 <MultipleSelectInput
                   label="Centro de costos"
-                  data={costCenterTypes}
+                  data={costCenterTypes as unknown as string[]}
                   name="costCenter"
                   selectedItems={selectedCostCenters ?? []}
                   setSelectedItems={setSelectedCostCenter}
