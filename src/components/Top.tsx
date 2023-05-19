@@ -26,12 +26,12 @@ const Top = ({ setPettyCash, currentPettyCash }: Props) => {
         onChange={(e) => setPettyCash(new Date(e.target.value))}
         className="rounded border-none text-lg outline-none focus:border-none focus:outline-none active:outline-none"
       >
-        {pettyCashDates &&
-          pettyCashDates.map((pettycash, i) => (
-            <option key={i} value={pettycash.date.toDateString()}>
-              {pettycash.label}
-            </option>
-          ))}
+        {!Boolean(pettyCashDates?.length) && <option value="">---</option>}
+        {pettyCashDates?.map((pettycash, i) => (
+          <option key={i} value={pettycash.date.toDateString()}>
+            {pettycash.label}
+          </option>
+        ))}
       </select>
       <div className="flex items-center gap-4">
         {session?.user?.isAdmin ? (

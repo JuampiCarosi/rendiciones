@@ -18,15 +18,12 @@ const Carousel = memo(function Carousel({ currentPettyCash }: { currentPettyCash
     setCurrentTicket(ticketId);
   };
 
-  console.log(areMovementsLoading, areTicketLoading);
-
   const isAllowedToEdit = useMemo(() => {
     return !currentPettyCash || currentPettyCash >= new Date();
   }, [currentPettyCash]);
 
   return (
     <div className="m-auto max-w-lg">
-      {/* {currentTicket && ( */}
       <EditTicketModal
         show={showEditTicketModal}
         handleShow={setShowEditTicketModal}
@@ -35,7 +32,9 @@ const Carousel = memo(function Carousel({ currentPettyCash }: { currentPettyCash
         tickets={tickets}
       />
       {areMovementsLoading && areTicketLoading ? (
-        <div>Cargando Tickets y Movimientos...</div>
+        <div className="mt-10 flex w-full justify-center text-sm font-semibold text-slate-500">
+          <h2 className="py-4">Cargando Tickets y Movimientos...</h2>
+        </div>
       ) : (
         <>
           {" "}
@@ -45,11 +44,12 @@ const Carousel = memo(function Carousel({ currentPettyCash }: { currentPettyCash
               <h3 className=" text-slate-400">No hay movimientos en esta caja</h3>
             </div>
           )}
-          {tickets &&
-            tickets.map((ticket, i) => (
-              <TicketCard key={i} ticket={ticket} onClick={() => handleTicketClick(ticket.id)} />
-            ))}
-          {movements && movements.map((movement, i) => <MovementCard key={i} movement={movement} />)}
+          {tickets?.map((ticket) => (
+            <TicketCard key={ticket.id} ticket={ticket} onClick={() => handleTicketClick(ticket.id)} />
+          ))}
+          {movements?.map((movement) => (
+            <MovementCard key={movement.id} movement={movement} />
+          ))}
         </>
       )}
     </div>
