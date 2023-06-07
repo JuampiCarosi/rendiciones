@@ -4,6 +4,7 @@ import defaultProfilePicture from "../../public/profile.png";
 import { trpc } from "../utils/trpc";
 import Button from "./Button";
 import { getNextWednesday, parsePettyCashDate } from "../utils/helpers";
+import { NavTabs } from "./Tabs-raidx";
 
 type Props = {
   setPettyCash: (pettyCash: Date) => void;
@@ -36,7 +37,7 @@ const Top = ({ setPettyCash, currentPettyCash }: Props) => {
       <div className="flex items-center gap-4">
         {session?.user?.isAdmin ? (
           <>
-            <Button
+            {/* <Button
               label={mutation.isLoading ? "Generando reporte..." : "Descargar reporte"}
               disabled={mutation.isLoading}
               onClick={() =>
@@ -51,7 +52,11 @@ const Top = ({ setPettyCash, currentPettyCash }: Props) => {
                   },
                 })
               }
-            />
+            /> */}
+            <NavTabs basePath="">
+              <NavTabs.Tab value="/">Tickets</NavTabs.Tab>
+              <NavTabs.Tab value="/admin-panel">Admin</NavTabs.Tab>
+            </NavTabs>
           </>
         ) : (
           <span className="text-md rounded-md bg-slate-300 px-4 py-1">
