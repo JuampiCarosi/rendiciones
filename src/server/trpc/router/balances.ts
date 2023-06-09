@@ -5,7 +5,7 @@ import { t } from "../trpc";
 import { ticketsRouter } from "./tickets";
 import { movementsRouter } from "./movements";
 import date from "date-and-time";
-import { costCenterTypes, Report } from "../../../shared/types";
+import { Report } from "../../../shared/types";
 import ExcelJS from "exceljs";
 import { readFileSync } from "fs";
 import { env } from "../../../env/client.mjs";
@@ -26,8 +26,6 @@ const costCenterSheetColumns = [
   { header: "Centro de costos", key: "costCenter", width: 16 },
   { header: "Monto", key: "amount", width: 16 },
 ];
-
-type CostCenter = typeof costCenterTypes[number];
 
 export const balancesRouter = t.router({
   getBalance: t.procedure.input(z.string().optional()).query(async ({ ctx, input }) => {
@@ -115,14 +113,14 @@ export const balancesRouter = t.router({
         userId: { in: employees },
       },
     });
-    const balances: { costCenter: CostCenter; amount: number }[] = [];
+    const balances: { costCenter: string; amount: number }[] = [];
 
     tickets.forEach((ticket: Ticket) => {
       const costCenter = JSON.parse(ticket.costCenter);
-      costCenter.forEach((c: CostCenter) => {
+      costCenter.forEach((c: string) => {
         const balance = balances.find((item) => item.costCenter === c);
         if (!balance) {
-          balances.push({ costCenter: c as CostCenter, amount: ticket.amount });
+          balances.push({ costCenter: c, amount: ticket.amount });
         } else {
           balance.amount += ticket.amount / costCenter.length;
         }

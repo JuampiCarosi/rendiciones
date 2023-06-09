@@ -8,6 +8,7 @@ import { movementsRouter } from "./movements";
 import { balancesRouter } from "./balances";
 import { pettyCashRouter } from "./pettyCash";
 import { inferRouterInputs, inferRouterOutputs } from "@trpc/server";
+import { adminRouter } from "./admin";
 
 export const appRouter = t.router({
   example: exampleRouter,
@@ -17,6 +18,7 @@ export const appRouter = t.router({
   movements: movementsRouter,
   balances: balancesRouter,
   pettyCash: pettyCashRouter,
+  admin: adminRouter,
 });
 
 // export type definition of API

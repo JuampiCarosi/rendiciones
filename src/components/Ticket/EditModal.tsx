@@ -9,7 +9,6 @@ import Button from "../Button";
 import ConfirmModal from "../ConfirmModal";
 import toast, { Toaster } from "react-hot-toast";
 import { Ticket } from "@prisma/client";
-import { costCenterTypes } from "../../shared/types";
 
 const ticketParamsVal = z.object({
   amount: z.number().positive(),
@@ -85,6 +84,8 @@ const EditTicketModal = memo(function EditTicketModal({
     resolver: zodResolver(ticketParamsVal),
     shouldUnregister: true,
   });
+
+  const { data: costCenterNames } = trpc.admin.getCosCenterNames.useQuery();
 
   const editTicketMutation = trpc.tickets.editTicket.useMutation({
     onSuccess() {
@@ -235,7 +236,7 @@ const EditTicketModal = memo(function EditTicketModal({
 
                 <MultipleSelectInput
                   label="Centro de costos"
-                  data={costCenterTypes as unknown as string[]}
+                  data={costCenterNames ?? []}
                   name="costCenter"
                   selectedItems={selectedCostCenters ?? []}
                   setSelectedItems={setSelectedCostCenter}

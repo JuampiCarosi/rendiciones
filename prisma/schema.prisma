@@ -85,3 +85,9 @@ model Movements {
   isFromBank    Boolean  @default(false)
   madeBy        String
 }
+
+model CostCenters {
+  id         Int    @id @default(autoincrement())
+  name       String @db.VarChar(255)
+  isFinished Int    @default(0)
+}

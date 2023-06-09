@@ -19,7 +19,6 @@ const Top = ({ setPettyCash, currentPettyCash }: Props) => {
   const formatoPesos = new Intl.NumberFormat("es-AR");
 
   const { data: pettyCashDates } = trpc.pettyCash.getDates.useQuery();
-  const mutation = trpc.balances.generateReport.useMutation();
 
   return (
     <div className="absolute flex h-12 w-full items-center justify-between gap-4 bg-white px-4 text-slate-600  shadow-md shadow-slate-200">
