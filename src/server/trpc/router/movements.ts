@@ -46,4 +46,11 @@ export const movementsRouter = t.router({
       },
     });
   }),
+  getById: t.procedure.input(z.string()).query(async ({ ctx, input }) => {
+    return ctx.prisma.movements.findUnique({
+      where: {
+        id: input,
+      },
+    });
+  }),
 });
