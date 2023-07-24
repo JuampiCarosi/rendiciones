@@ -11,7 +11,7 @@ type InputProps = {
   children?: React.ReactNode;
   name?: string;
   value?: string;
-  register: UseFormRegister<FieldValues>;
+  register?: UseFormRegister<FieldValues>;
   required?: boolean;
 };
 
@@ -23,7 +23,7 @@ type SelectInputProps = {
   children?: React.ReactNode;
   name: string;
   value?: string;
-  register: UseFormRegister<FieldValues>;
+  register?: UseFormRegister<FieldValues>;
   required?: boolean;
   data: { value: string; label: string }[];
   autoFocus?: boolean;
@@ -60,10 +60,9 @@ const Input = (props: InputProps) => {
   return (
     <div className="grid gap-1">
       <label className="text-sm text-gray-600">{label}</label>
-      <input
-        className={`h-10 w-full rounded-lg border-gray-300 font-light text-gray-800 ${
-          disabled ? "bg-slate-100" : ""
-        } focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50`}
+      {register ? <input
+        className={`h-10 w-full rounded-lg border-gray-300 font-light text-gray-800 ${disabled ? "bg-slate-100" : ""
+          } focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50`}
         type={type}
         {...register(name, { required, valueAsNumber: type === "number", valueAsDate: type === "date" })}
         defaultValue={value}
@@ -71,7 +70,16 @@ const Input = (props: InputProps) => {
         disabled={disabled}
         style={style}
         autoComplete="off"
-      />
+      /> : <input
+        className={`h-10 w-full rounded-lg border-gray-300 font-light text-gray-800 ${disabled ? "bg-slate-100" : ""
+          } focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50`}
+        type={type}
+        defaultValue={value}
+        placeholder={placeholder}
+        disabled={disabled}
+        style={style}
+        autoComplete="off"
+      />}
       {children}
     </div>
   );
@@ -96,10 +104,9 @@ export const SelectInput = (props: SelectInputProps) => {
   return (
     <div className="grid gap-1">
       <label className="text-sm text-gray-600">{label}</label>
-      <select
-        className={`h-10 rounded-lg border-gray-300 ${
-          disabled ? "bg-slate-100" : ""
-        } font-light text-gray-800 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50`}
+      {register ? <select
+        className={`h-10 rounded-lg border-gray-300 ${disabled ? "bg-slate-100" : ""
+          } font-light text-gray-800 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50`}
         disabled={disabled}
         defaultValue={value}
         {...register(name, { required })}
@@ -112,7 +119,23 @@ export const SelectInput = (props: SelectInputProps) => {
             {opt.label}
           </option>
         ))}
-      </select>
+      </select> :
+        <select
+          className={`h-10 rounded-lg border-gray-300 ${disabled ? "bg-slate-100" : ""
+            } font-light text-gray-800 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50`}
+          disabled={disabled}
+          defaultValue={value}
+          autoComplete="off"
+          autoFocus={autoFocus}
+        >
+          {emptyOption && <option value="">------</option>}
+          {data.map((opt, i: number) => (
+            <option key={i} value={opt.value}>
+              {opt.label}
+            </option>
+          ))}
+        </select>
+      }
       {errors[name] && <span className="error">{errMsg}</span>}
       {children}
     </div>
@@ -137,9 +160,8 @@ export const MultipleSelectInput = (props: MultipleSelectInputProps) => {
       <Listbox disabled={disabled} value={selectedItems} onChange={setSelectedItems} multiple>
         <Listbox.Label className="text-sm text-gray-600">{label}</Listbox.Label>
         <Listbox.Button
-          className={` h-10 rounded-lg border	border-gray-300 px-3 text-left ${
-            disabled ? "bg-slate-100" : ""
-          } font-light text-gray-800 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50`}
+          className={` h-10 rounded-lg border	border-gray-300 px-3 text-left ${disabled ? "bg-slate-100" : ""
+            } font-light text-gray-800 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50`}
         >
           {selectedItems.length > 0 ? selectedItems.map((item) => item).join(", ") : "------"}
         </Listbox.Button>

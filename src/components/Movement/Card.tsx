@@ -6,11 +6,12 @@ import { trpc } from "../../utils/trpc";
 type MovementCardProps = {
   movement: Movements;
   isMovement?: boolean;
+  onClick?: () => void;
 };
 
 const formatoPesos = new Intl.NumberFormat("es-AR");
 
-const MovementCard = ({ movement }: MovementCardProps) => {
+const MovementCard = ({ movement, onClick }: MovementCardProps) => {
   const { data: session } = useSession();
 
   const expenseType =
@@ -35,7 +36,7 @@ const MovementCard = ({ movement }: MovementCardProps) => {
   );
 
   return (
-    <div className=" p-2">
+    <div className=" p-2" onClick={() => onClick && onClick()}>
       <div className=" flex flex-col items-start gap-1 rounded-lg border	bg-gray-50 p-4 shadow-sm">
         <div className=" w-full overflow-hidden text-ellipsis whitespace-nowrap	pb-1 text-lg font-semibold">
           <span>{`${movementPreposition}: ${movementUser?.name}`}</span>

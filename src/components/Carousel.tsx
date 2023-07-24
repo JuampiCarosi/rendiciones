@@ -4,10 +4,12 @@ import MovementCard from "./Movement/Card";
 
 import TicketCard from "./Ticket/Card";
 import EditTicketModal from "./Ticket/EditModal";
+import MovementPreview from "./Movement/Preview";
 
 const Carousel = memo(function Carousel({ currentPettyCash }: { currentPettyCash: Date }) {
   const [currentTicket, setCurrentTicket] = useState<string | null>(null);
   const [showEditTicketModal, setShowEditTicketModal] = useState(false);
+  const [showMovementPreview, setShowMovementPreview] = useState(false);
 
   const { data: movements, isLoading: areMovementsLoading } =
     trpc.movements.getByDate.useQuery(currentPettyCash);
@@ -16,6 +18,11 @@ const Carousel = memo(function Carousel({ currentPettyCash }: { currentPettyCash
   const handleTicketClick = (ticketId: string) => {
     setShowEditTicketModal(true);
     setCurrentTicket(ticketId);
+  };
+
+  const handleMovementClick = (movementId: string) => {
+    setShowMovementPreview(true);
+    setCurrentTicket(movementId);
   };
 
   const isAllowedToEdit = useMemo(() => {
@@ -31,6 +38,12 @@ const Carousel = memo(function Carousel({ currentPettyCash }: { currentPettyCash
         ticketId={currentTicket}
         tickets={tickets}
       />
+      <MovementPreview
+        show={showMovementPreview}
+        handleShow={setShowMovementPreview}
+        movementId={currentTicket || ""}
+      />
+
       {areMovementsLoading && areTicketLoading ? (
         <div className="mt-10 flex w-full justify-center text-sm font-semibold text-slate-500">
           <h2 className="py-4">Cargando Tickets y Movimientos...</h2>
@@ -48,7 +61,11 @@ const Carousel = memo(function Carousel({ currentPettyCash }: { currentPettyCash
             <TicketCard key={ticket.id} ticket={ticket} onClick={() => handleTicketClick(ticket.id)} />
           ))}
           {movements?.map((movement) => (
-            <MovementCard key={movement.id} movement={movement} />
+            <MovementCard
+              key={movement.id}
+              movement={movement}
+              onClick={() => handleMovementClick(movement.id)}
+            />
           ))}
         </>
       )}
