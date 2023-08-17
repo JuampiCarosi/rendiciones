@@ -59,7 +59,7 @@ const InvoiceModal = ({ handleShow, show }: Props) => {
     resolver: zodResolver(ticketParamsVal),
   });
 
-  const { data: costCenterNames } = trpc.admin.getCosCenterNames.useQuery();
+  const { data: costCenters } = trpc.admin.getCosCenters.useQuery();
 
   const mutation = trpc.tickets.createTicket.useMutation({
     onSuccess(ticket) {
@@ -145,7 +145,7 @@ const InvoiceModal = ({ handleShow, show }: Props) => {
 
                 <MultipleSelectInput
                   label="Centro de costos"
-                  data={costCenterNames ?? []}
+                  data={costCenters?.map((c) => c.name) ?? []}
                   name="costCenter"
                   selectedItems={selectedCostCenters}
                   setSelectedItems={setSelectedCostCenter}

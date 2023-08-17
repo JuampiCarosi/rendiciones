@@ -85,7 +85,7 @@ const EditTicketModal = memo(function EditTicketModal({
     shouldUnregister: true,
   });
 
-  const { data: costCenterNames } = trpc.admin.getCosCenterNames.useQuery();
+  const { data: costCenters } = trpc.admin.getCosCenters.useQuery();
 
   const editTicketMutation = trpc.tickets.editTicket.useMutation({
     onSuccess() {
@@ -236,7 +236,7 @@ const EditTicketModal = memo(function EditTicketModal({
 
                 <MultipleSelectInput
                   label="Centro de costos"
-                  data={costCenterNames ?? []}
+                  data={costCenters?.map((c) => c.name) ?? []}
                   name="costCenter"
                   selectedItems={selectedCostCenters ?? []}
                   setSelectedItems={setSelectedCostCenter}
