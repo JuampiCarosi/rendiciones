@@ -20,19 +20,6 @@ export const movementsParamsVal = z.object({
 });
 export type expenseTypes = "combustible" | "viaticos" | "peajes" | "otros";
 
-export const costCenterTypes = [
-  "GRA",
-  "GSP",
-  "PICC",
-  "BOAT",
-  "MIGUE",
-  "AGPA",
-  "LEON",
-  "CAMP",
-  "INCHU",
-  "HUDS",
-] as const;
-
 type ExcelTicket = Omit<Ticket, " amount"> & { cashOut: number; cashIn: number };
 type ExcelMovement = Omit<Movements, "amount"> & {
   cashOut: number;

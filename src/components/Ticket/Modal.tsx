@@ -6,7 +6,6 @@ import { Dialog, Transition } from "@headlessui/react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import toast, { Toaster } from "react-hot-toast";
-import { costCenterTypes } from "../../shared/types";
 
 export const ticketParamsVal = z.object({
   amount: z.number().min(1),
@@ -59,6 +58,8 @@ const InvoiceModal = ({ handleShow, show }: Props) => {
   } = useForm({
     resolver: zodResolver(ticketParamsVal),
   });
+
+  const { data: costCenters } = trpc.admin.getCosCenters.useQuery();
 
   const mutation = trpc.tickets.createTicket.useMutation({
     onSuccess(ticket) {
@@ -144,7 +145,7 @@ const InvoiceModal = ({ handleShow, show }: Props) => {
 
                 <MultipleSelectInput
                   label="Centro de costos"
-                  data={costCenterTypes as unknown as string[]}
+                  data={costCenters?.map((c) => c.name) ?? []}
                   name="costCenter"
                   selectedItems={selectedCostCenters}
                   setSelectedItems={setSelectedCostCenter}
