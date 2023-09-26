@@ -51,4 +51,24 @@ export const adminRouter = t.router({
       },
     });
   }),
+  getUsers: t.procedure.query(async ({ ctx }) => {
+    return await ctx.prisma.user.findMany();
+  }),
+  getAllowedEmails: t.procedure.query(async ({ ctx }) => {
+    return await ctx.prisma.allowedEmails.findMany();
+  }),
+  addAllowedEmail: t.procedure.input(z.string()).mutation(async ({ ctx, input: email }) => {
+    return await ctx.prisma.allowedEmails.create({
+      data: {
+        email,
+      },
+    });
+  }),
+  deleteAllowedEmail: t.procedure.input(z.number()).mutation(async ({ ctx, input }) => {
+    return await ctx.prisma.allowedEmails.delete({
+      where: {
+        id: input,
+      },
+    });
+  }),
 });

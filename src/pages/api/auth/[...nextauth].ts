@@ -6,7 +6,7 @@ import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import { prisma } from "../../../server/db/client";
 import { env } from "../../../env/server.mjs";
 
-const allowedEmails = env.ALLOWED_EMAILS?.split(",");
+// const allowedEmails = env.ALLOWED_EMAILS?.split(",");
 
 export const authOptions: NextAuthOptions = {
   callbacks: {
@@ -25,13 +25,20 @@ export const authOptions: NextAuthOptions = {
       else if (new URL(url).origin === baseUrl) return url;
       return baseUrl;
     },
-    signIn({ account, profile }) {
+    async signIn({ account, profile }) {
       if (env.NEXTAUTH_TEST_MODE === "true") return true;
+      if (account?.provider !== "google" || !profile?.email) return false;
+      if (profile.email.endsWith("@cldproyectos.com")) return true;
 
-      return Boolean(
-        (account?.provider === "google" && profile?.email && profile.email.endsWith("@cldproyectos.com")) ||
-          allowedEmails?.includes(profile?.email || "")
-      );
+      const allowedEmails = (
+        await prisma.allowedEmails.findMany({
+          select: {
+            email: true,
+          },
+        })
+      ).map((user) => user.email);
+
+      return Boolean(allowedEmails?.includes(profile.email));
     },
   },
   adapter: PrismaAdapter(prisma),
