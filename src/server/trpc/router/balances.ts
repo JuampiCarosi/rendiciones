@@ -10,6 +10,8 @@ import ExcelJS from "exceljs";
 import { readFileSync } from "fs";
 import { env } from "../../../env/client.mjs";
 import { usersRouter } from "./users";
+import { groupBy } from "../../../utils/groupby";
+import { isSameYear } from "date-fns";
 
 const sheetColumns = [
   { header: "ID", key: "ticketId", width: 16 },
@@ -18,9 +20,35 @@ const sheetColumns = [
   { header: "Descripción", key: "description", width: 16 },
   { header: "Centro de costos", key: "costCenter", width: 16 },
   { header: "Tipo de gasto", key: "expenseType", width: 16 },
-  { header: "Salida de caja", key: "cashOut", width: 16 },
-  { header: "Ingreso de caja", key: "cashIn", width: 16 },
+  { header: "Salida de caja", key: "cashOut", width: 16, style: { numFmt: '"$"#,##0.00' } },
+  { header: "Ingreso de caja", key: "cashIn", width: 16, style: { numFmt: '"$"#,##0.00' } },
 ];
+
+const sheetAfipColumns: Partial<ExcelJS.Column>[] = [
+  { header: "Fecha", key: "invoiceDate", width: 10 },
+  { header: "Tipo de ticket", key: "invoiceType", width: 5 },
+  { header: "Descripción", key: "description", width: 16 },
+  { header: "Monto Registrado", key: "amount", width: 15, style: { numFmt: '"$"#,##0.00' } },
+  { header: "Punto de venta", key: "pointOfSale", width: 14 },
+  { header: "Número de comprobante", key: "invoiceNumber", width: 14 },
+  { header: "CUIT", key: "cuit", width: 16 },
+  { header: "Denominacion Emisor", key: "emmiterDenomitation", width: 20 },
+  { header: "Neto gravado", key: "netoGravado", width: 14, style: { numFmt: '"$"#,##0.00' } },
+  { header: "Neto no gravado", key: "netoNoGravado", width: 12, style: { numFmt: '"$"#,##0.00' } },
+  { header: "Operaciones Extentas", key: "operacionesExentas", width: 10, style: { numFmt: '"$"#,##0.00' } },
+  { header: "IVA 21%", key: "iva21", width: 10, style: { numFmt: '"$"#,##0.00' } },
+  { header: "IVA 10.5%", key: "iva105", width: 10, style: { numFmt: '"$"#,##0.00' } },
+  { header: "Percepciones IVA", key: "percepcionesIva", width: 10, style: { numFmt: '"$"#,##0.00' } },
+  { header: "Percep IIBB CABA", key: "percepcionesIIBBCABA", width: 10, style: { numFmt: '"$"#,##0.00' } },
+  { header: "Percep IIBB BSAS", key: "percepcionesIIBBBSAS", width: 10, style: { numFmt: '"$"#,##0.00' } },
+  {
+    header: "Impuestos Internos / Otros",
+    key: "impuestosInternos",
+    width: 10,
+    style: { numFmt: '"$"#,##0.00' },
+  },
+  { header: "Monto Total", key: "total", width: 16, style: { numFmt: '"$"#,##0.00' } },
+] as const;
 
 const costCenterSheetColumns = [
   { header: "Centro de costos", key: "costCenter", width: 16 },
@@ -270,6 +298,68 @@ export const balancesRouter = t.router({
     const costCenterSheet = workbook.addWorksheet("Resumen de centros de costo");
     costCenterSheet.columns = costCenterSheetColumns;
     costCenterSheet.addRows(costCenterBalances ?? []);
+
+    await workbook.xlsx.writeFile("/tmp/report.xlsx");
+
+    const stream = readFileSync("/tmp/report.xlsx");
+
+    return { report: stream.toString("base64") };
+  }),
+  generateAfipReport: t.procedure.input(z.date()).mutation(async ({ ctx, input }) => {
+    const ticketCaller = ticketsRouter.createCaller(ctx);
+    const allTickets = await ticketCaller.getAllAfip();
+
+    const tickets = allTickets.filter((ticket) => isSameYear(ticket.invoiceDate, input));
+    const allReports = groupBy(tickets, ["userName", "isEmployee"], "report");
+    const rawReports = allReports.filter(({ report, isEmployee }) => report.length > 0 && isEmployee);
+    const reports = rawReports.map(({ userName, report }) => ({
+      userName,
+      report: report.map((ticket) => ({
+        ...ticket,
+        netoGravado: 0,
+        netoNoGravado: 0,
+        operacionesExentas: 0,
+        iva21: 0,
+        iva105: 0,
+        percepcionesIva: 0,
+        percepcionesIIBBCABA: 0,
+        percepcionesIIBBBSAS: 0,
+        impuestosInternos: 0,
+      })),
+    }));
+    const workbook = new ExcelJS.Workbook();
+
+    reports?.forEach(({ userName, report }) => {
+      const sheet = workbook.addWorksheet(userName);
+      sheet.columns = sheetAfipColumns;
+
+      sheet.getRow(1).height = 20;
+      sheet.getRow(1).eachCell((cell) => {
+        cell.fill = {
+          type: "pattern",
+          pattern: "solid",
+          fgColor: { argb: "FFFF00" },
+        };
+        cell.border = {
+          top: { style: "thin" },
+          left: { style: "thin" },
+          bottom: { style: "thin" },
+          right: { style: "thin" },
+        };
+      });
+
+      sheet.addRows(report);
+
+      const totalColumnIndex = sheetAfipColumns.findIndex((col) => col.key === "total");
+
+      report.forEach((ticket, i) => {
+        const totalFormula = `SUM(I${i + 2}:Q${i + 2})`;
+        sheet.getCell(`${String.fromCharCode(65 + totalColumnIndex)}${i + 2}`).value = {
+          formula: totalFormula,
+          date1904: false,
+        };
+      });
+    });
 
     await workbook.xlsx.writeFile("/tmp/report.xlsx");
 

@@ -3,7 +3,7 @@ import { GetServerSideProps, NextPage } from "next";
 import Top from "../components/Top";
 import { Fragment, useState } from "react";
 import { getNextWednesday, parsePettyCashDate } from "../utils/helpers";
-import { FileLineChart, Store, Trash2, UserSquare2, X } from "lucide-react";
+import { FileKey, FileLineChart, Store, Trash2, UserSquare2, X } from "lucide-react";
 import { trpc } from "../utils/trpc";
 import clsx from "clsx";
 import { getServerSession } from "next-auth";
@@ -19,7 +19,8 @@ import { dialog } from "../utils/dialog";
 
 const Home: NextPage = () => {
   const [currentPettyCash, setCurrentPettyCash] = useState<Date>(getNextWednesday(new Date()));
-  const mutation = trpc.balances.generateReport.useMutation();
+  const generateReportMutation = trpc.balances.generateReport.useMutation();
+  const generateAfipReportMutation = trpc.balances.generateAfipReport.useMutation();
   const [showCostCenterModal, setShowCostCenterModal] = useState(false);
   const [showUsersModal, setShowUsersModal] = useState(false);
 
@@ -35,8 +36,8 @@ const Home: NextPage = () => {
       <div className="mx-5 flex  flex-col gap-3 pt-20">
         <div
           onClick={() =>
-            !mutation.isLoading &&
-            mutation.mutate(getNextWednesday(currentPettyCash), {
+            !generateReportMutation.isLoading &&
+            generateReportMutation.mutate(getNextWednesday(currentPettyCash), {
               onSuccess: ({ report }) => {
                 const mediaType =
                   "data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,";
@@ -50,8 +51,29 @@ const Home: NextPage = () => {
           className="flex cursor-pointer  items-center gap-3  border-b border-slate-400 pt-2 pb-4 text-slate-600 hover:underline "
         >
           <FileLineChart />
-          <h3 className={clsx("text-xl", mutation.isLoading && "text-slate-500 ")}>
-            {mutation.isLoading ? "Generando Reporte..." : "Generar Reporte"}
+          <h3 className={clsx("text-xl", generateReportMutation.isLoading && "text-slate-500 ")}>
+            {generateReportMutation.isLoading ? "Generando Reporte..." : "Generar Reporte"}
+          </h3>
+        </div>
+        <div
+          onClick={() =>
+            !generateAfipReportMutation.isLoading &&
+            generateAfipReportMutation.mutate(currentPettyCash, {
+              onSuccess: ({ report }) => {
+                const mediaType =
+                  "data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,";
+                const a = document.createElement("a");
+                a.href = `${mediaType}${report}`;
+                a.download = `afip.xlsx`;
+                a.click();
+              },
+            })
+          }
+          className="flex cursor-pointer  items-center gap-3  border-b border-slate-400 pt-2 pb-4 text-slate-600 hover:underline "
+        >
+          <FileKey />
+          <h3 className={clsx("text-xl", generateAfipReportMutation.isLoading && "text-slate-500 ")}>
+            {generateAfipReportMutation.isLoading ? "Generando Reporte AFIP..." : "Generar Reporte AFIP"}
           </h3>
         </div>
         <div

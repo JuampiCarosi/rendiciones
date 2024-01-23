@@ -2,6 +2,7 @@ import { t } from "../trpc";
 import { ticketParamsVal } from "../../../shared/types";
 import { getNextWednesday } from "../../../utils/helpers";
 import { z } from "zod";
+import { Ticket, User } from "@prisma/client";
 
 const editTicketsVal = ticketParamsVal.extend({
   id: z.string(),
@@ -78,5 +79,14 @@ export const ticketsRouter = t.router({
         id: input,
       },
     });
+  }),
+  getAllAfip: t.procedure.query(async ({ ctx }) => {
+    const a = await ctx.prisma.$queryRaw`
+    SELECT * FROM Ticket a
+    LEFT JOIN User b ON b.id = a.userId
+    WHERE invoiceType = 'A'
+    `;
+
+    return a as Array<Ticket & User>;
   }),
 });
