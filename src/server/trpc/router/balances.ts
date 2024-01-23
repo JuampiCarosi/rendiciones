@@ -48,7 +48,7 @@ const sheetAfipColumns: Partial<ExcelJS.Column>[] = [
     style: { numFmt: '"$"#,##0.00' },
   },
   { header: "Monto Total", key: "total", width: 16, style: { numFmt: '"$"#,##0.00' } },
-] as const;
+];
 
 const costCenterSheetColumns = [
   { header: "Centro de costos", key: "costCenter", width: 16 },
