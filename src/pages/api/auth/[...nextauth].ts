@@ -14,7 +14,9 @@ export const authOptions: NextAuthOptions = {
       if (session.user) {
         session.user.id = user.id;
 
-        session.user.isAdmin = ("isAdmin" in user && (user.isAdmin as boolean)) ?? false;
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        session.user.isAdmin = (user.isAdmin as boolean) ?? false;
       }
       return { ...session, ...user };
     },
