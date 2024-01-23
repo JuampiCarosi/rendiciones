@@ -416,15 +416,15 @@ const UsersModal = ({ handleShow, show }: { show: boolean; handleShow: (show: bo
                 />
               </div>
 
-              <EmailsTable.Root rounded="all">
+              <EmailsTable.Root rounded="all" className="w[330px]">
                 <EmailsTable.Head>
-                  <EmailsTable.Column className="pl-6" accessor="email" label="Email" align="left" />
+                  <EmailsTable.Column accessor="email" label="Email" align="left" />
                   <EmailsTable.Column accessorAlias="actions" label="Acciones" align="center" />
                 </EmailsTable.Head>
                 <EmailsTable.Body>
                   {emailsRows.map(({ row }) => (
                     <EmailsTable.Row key={row.id} row={row}>
-                      <EmailsTable.Cell className="pl-6 text-lg" accessor="email" align="left" />
+                      <EmailsTable.Cell className=" text-lg" accessor="email" align="left" />
                       <EmailsTable.Cell accessorAlias="actions" align="center">
                         <div className="space-x-4">
                           <button
