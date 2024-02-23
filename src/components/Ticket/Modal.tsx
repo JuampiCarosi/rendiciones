@@ -13,6 +13,7 @@ export const ticketParamsVal = z.object({
   invoiceDate: z.date(),
   expenseType: z.string().min(1),
   invoiceType: z.string().min(1),
+  hasQR: z.coerce.boolean().optional(),
 });
 
 const invoiceTypes = [
@@ -78,7 +79,7 @@ const InvoiceModal = ({ handleShow, show }: Props) => {
   };
 
   const onSubmit = handleSubmitVal((props) => {
-    const { amount, description, invoiceDate, invoiceType, expenseType } = props;
+    const { amount, description, invoiceDate, invoiceType, expenseType, hasQR } = props;
     mutation.mutate({
       amount: Number(amount),
       description,
@@ -86,6 +87,7 @@ const InvoiceModal = ({ handleShow, show }: Props) => {
       invoiceType,
       expenseType,
       costCenter: JSON.stringify(selectedCostCenters),
+      hasQR,
     });
     handleClose();
     setSelectedCostCenter([]);
@@ -159,6 +161,8 @@ const InvoiceModal = ({ handleShow, show }: Props) => {
                   register={register}
                   required
                 />
+
+                <Input register={register} required label="Tiene QR" name="hasQR" type="checkbox" />
 
                 <div className="flex gap-2 pt-4 sm:justify-end">
                   <button

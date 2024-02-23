@@ -17,6 +17,7 @@ const ticketParamsVal = z.object({
   expenseType: z.string().min(1),
   invoiceType: z.string().min(1),
   costCenter: z.string().min(1).optional(),
+  hasQR: z.coerce.boolean().optional(),
 });
 
 const invoiceTypes = [
@@ -39,6 +40,7 @@ const errorMessages = {
   invoiceDate: "fecha del ticket",
   costCenter: "centro de costos",
   expenseType: "tipo de gasto",
+  hasQR: "tiene QR",
 };
 
 type ErrorMessageKeys = keyof typeof errorMessages;
@@ -115,10 +117,13 @@ const EditTicketModal = memo(function EditTicketModal({
         expenseType,
         costCenter: JSON.stringify(selectedCostCenters),
         id: ticket.id,
+        hasQR: ticket.hasQR,
       });
     handleShow(false);
     setIsEditing(false);
   });
+
+  console.log(formState);
 
   const errorMessageKeys = Object.keys(formState.errors) as ErrorMessageKeys[];
   const clientErrorMessageArray = errorMessageKeys.map((key) => {
@@ -250,6 +255,15 @@ const EditTicketModal = memo(function EditTicketModal({
                   register={register}
                   required
                   value={ticket?.expenseType}
+                  disabled={!isEditing}
+                />
+
+                <Input
+                  register={register}
+                  label="Tiene QR"
+                  name="hasQR"
+                  type="checkbox"
+                  value={ticket?.hasQR.toString() ?? "false"}
                   disabled={!isEditing}
                 />
 

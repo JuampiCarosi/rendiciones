@@ -1,6 +1,7 @@
 import { Listbox } from "@headlessui/react";
 import { HTMLInputTypeAttribute } from "react";
 import { FieldValues, UseFormRegister } from "react-hook-form";
+import { cn } from "../utils/cn";
 
 type InputProps = {
   type?: HTMLInputTypeAttribute;
@@ -13,6 +14,7 @@ type InputProps = {
   value?: string;
   register?: UseFormRegister<FieldValues>;
   required?: boolean;
+  className?: string;
 };
 
 type SelectInputProps = {
@@ -53,33 +55,44 @@ const Input = (props: InputProps) => {
     value,
     register,
     required,
+    className,
     disabled,
   } = props;
   if (!name) throw new Error("Input component needs a name prop");
-
   return (
-    <div className="grid gap-1">
+    <div className={cn(type === "checkbox" ? "flex items-center gap-2 pt-2" : "grid gap-1")}>
       <label className="text-sm text-gray-600">{label}</label>
-      {register ? <input
-        className={`h-10 w-full rounded-lg border-gray-300 font-light text-gray-800 ${disabled ? "bg-slate-100" : ""
-          } focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50`}
-        type={type}
-        {...register(name, { required, valueAsNumber: type === "number", valueAsDate: type === "date" })}
-        defaultValue={value}
-        placeholder={placeholder}
-        disabled={disabled}
-        style={style}
-        autoComplete="off"
-      /> : <input
-        className={`h-10 w-full rounded-lg border-gray-300 font-light text-gray-800 ${disabled ? "bg-slate-100" : ""
-          } focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50`}
-        type={type}
-        defaultValue={value}
-        placeholder={placeholder}
-        disabled={disabled}
-        style={style}
-        autoComplete="off"
-      />}
+      {register ? (
+        <input
+          className={cn(
+            "h-10 w-full rounded-lg border-gray-300 font-light text-gray-800  focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50",
+            disabled && "bg-slate-100",
+            type === "checkbox" && "h-4 w-4 rounded-sm",
+            className
+          )}
+          type={type}
+          {...register(name, { required, valueAsNumber: type === "number", valueAsDate: type === "date" })}
+          defaultValue={value}
+          placeholder={placeholder}
+          disabled={disabled}
+          style={style}
+          autoComplete="off"
+        />
+      ) : (
+        <input
+          className={cn(
+            "h-10 w-full rounded-lg border-gray-300 font-light text-gray-800  focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50",
+            disabled && "bg-slate-100",
+            className
+          )}
+          type={type}
+          defaultValue={value}
+          placeholder={placeholder}
+          disabled={disabled}
+          style={style}
+          autoComplete="off"
+        />
+      )}
       {children}
     </div>
   );
@@ -104,25 +117,29 @@ export const SelectInput = (props: SelectInputProps) => {
   return (
     <div className="grid gap-1">
       <label className="text-sm text-gray-600">{label}</label>
-      {register ? <select
-        className={`h-10 rounded-lg border-gray-300 ${disabled ? "bg-slate-100" : ""
-          } font-light text-gray-800 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50`}
-        disabled={disabled}
-        defaultValue={value}
-        {...register(name, { required })}
-        autoComplete="off"
-        autoFocus={autoFocus}
-      >
-        {emptyOption && <option value="">------</option>}
-        {data.map((opt, i: number) => (
-          <option key={i} value={opt.value}>
-            {opt.label}
-          </option>
-        ))}
-      </select> :
+      {register ? (
         <select
-          className={`h-10 rounded-lg border-gray-300 ${disabled ? "bg-slate-100" : ""
-            } font-light text-gray-800 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50`}
+          className={`h-10 rounded-lg border-gray-300 ${
+            disabled ? "bg-slate-100" : ""
+          } font-light text-gray-800 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50`}
+          disabled={disabled}
+          defaultValue={value}
+          {...register(name, { required })}
+          autoComplete="off"
+          autoFocus={autoFocus}
+        >
+          {emptyOption && <option value="">------</option>}
+          {data.map((opt, i: number) => (
+            <option key={i} value={opt.value}>
+              {opt.label}
+            </option>
+          ))}
+        </select>
+      ) : (
+        <select
+          className={`h-10 rounded-lg border-gray-300 ${
+            disabled ? "bg-slate-100" : ""
+          } font-light text-gray-800 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50`}
           disabled={disabled}
           defaultValue={value}
           autoComplete="off"
@@ -135,7 +152,7 @@ export const SelectInput = (props: SelectInputProps) => {
             </option>
           ))}
         </select>
-      }
+      )}
       {errors[name] && <span className="error">{errMsg}</span>}
       {children}
     </div>
@@ -160,8 +177,9 @@ export const MultipleSelectInput = (props: MultipleSelectInputProps) => {
       <Listbox disabled={disabled} value={selectedItems} onChange={setSelectedItems} multiple>
         <Listbox.Label className="text-sm text-gray-600">{label}</Listbox.Label>
         <Listbox.Button
-          className={` h-10 rounded-lg border	border-gray-300 px-3 text-left ${disabled ? "bg-slate-100" : ""
-            } font-light text-gray-800 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50`}
+          className={` h-10 rounded-lg border	border-gray-300 px-3 text-left ${
+            disabled ? "bg-slate-100" : ""
+          } font-light text-gray-800 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50`}
         >
           {selectedItems.length > 0 ? selectedItems.map((item) => item).join(", ") : "------"}
         </Listbox.Button>

@@ -72,6 +72,7 @@ model Ticket {
   expenseType   String
   pettyCashDate DateTime
   userId        String
+  hasQR         Boolean  @default(false)
 }
 
 model Movements {

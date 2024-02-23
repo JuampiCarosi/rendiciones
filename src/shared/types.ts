@@ -8,6 +8,7 @@ export const ticketParamsVal = z.object({
   expenseType: z.string().min(1),
   invoiceType: z.string().min(1),
   costCenter: z.string().min(1).optional(),
+  hasQR: z.boolean().optional(),
 });
 
 export const movementsParamsVal = z.object({

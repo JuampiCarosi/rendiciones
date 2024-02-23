@@ -26,6 +26,7 @@ export const ticketsRouter = t.router({
         userName: ctx.session?.user?.name || "usuario generico",
         userId: ctx.session?.user?.id,
         pettyCashDate: getNextWednesday(new Date()),
+        hasQR: input.hasQR ?? false,
       },
     });
   }),
@@ -70,6 +71,7 @@ export const ticketsRouter = t.router({
         expenseType: input.expenseType,
         invoiceType: input.invoiceType,
         costCenter: input.costCenter,
+        hasQR: input.hasQR,
       },
     });
   }),
