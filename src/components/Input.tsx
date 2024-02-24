@@ -15,6 +15,7 @@ type InputProps = {
   register?: UseFormRegister<FieldValues>;
   required?: boolean;
   className?: string;
+  defaultChecked?: boolean;
 };
 
 type SelectInputProps = {
@@ -49,14 +50,13 @@ const Input = (props: InputProps) => {
     type = "text",
     label,
     name,
-    style,
-    placeholder,
     children,
     value,
     register,
     required,
     className,
     disabled,
+    ...inputProps
   } = props;
   if (!name) throw new Error("Input component needs a name prop");
   return (
@@ -73,10 +73,9 @@ const Input = (props: InputProps) => {
           type={type}
           {...register(name, { required, valueAsNumber: type === "number", valueAsDate: type === "date" })}
           defaultValue={value}
-          placeholder={placeholder}
           disabled={disabled}
-          style={style}
           autoComplete="off"
+          {...inputProps}
         />
       ) : (
         <input
@@ -87,10 +86,9 @@ const Input = (props: InputProps) => {
           )}
           type={type}
           defaultValue={value}
-          placeholder={placeholder}
           disabled={disabled}
-          style={style}
           autoComplete="off"
+          {...inputProps}
         />
       )}
       {children}

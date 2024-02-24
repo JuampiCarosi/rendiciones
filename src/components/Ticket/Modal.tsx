@@ -87,7 +87,7 @@ const InvoiceModal = ({ handleShow, show }: Props) => {
       invoiceType,
       expenseType,
       costCenter: JSON.stringify(selectedCostCenters),
-      hasQR,
+      hasQR: Boolean(hasQR),
     });
     handleClose();
     setSelectedCostCenter([]);

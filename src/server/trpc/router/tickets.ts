@@ -60,7 +60,7 @@ export const ticketsRouter = t.router({
   }),
   editTicket: t.procedure.input(editTicketsVal).mutation(async ({ input, ctx }) => {
     if (!ctx.session?.user) throw new Error("Not logged in");
-    await ctx.prisma.ticket.update({
+    return await ctx.prisma.ticket.update({
       where: {
         id: input.id,
       },

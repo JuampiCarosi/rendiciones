@@ -17,7 +17,7 @@ const ticketParamsVal = z.object({
   expenseType: z.string().min(1),
   invoiceType: z.string().min(1),
   costCenter: z.string().min(1).optional(),
-  hasQR: z.coerce.boolean().optional(),
+  hasQR: z.coerce.boolean(),
 });
 
 const invoiceTypes = [
@@ -107,7 +107,7 @@ const EditTicketModal = memo(function EditTicketModal({
   });
 
   const onSubmit = handleSubmitVal((props) => {
-    const { amount, description, invoiceDate, invoiceType, expenseType } = props;
+    const { amount, description, invoiceDate, invoiceType, expenseType, hasQR } = props;
     if (ticket)
       editTicketMutation.mutate({
         amount: Number(amount),
@@ -117,7 +117,7 @@ const EditTicketModal = memo(function EditTicketModal({
         expenseType,
         costCenter: JSON.stringify(selectedCostCenters),
         id: ticket.id,
-        hasQR: ticket.hasQR,
+        hasQR: Boolean(hasQR),
       });
     handleShow(false);
     setIsEditing(false);
@@ -263,7 +263,7 @@ const EditTicketModal = memo(function EditTicketModal({
                   label="Tiene QR"
                   name="hasQR"
                   type="checkbox"
-                  value={ticket?.hasQR.toString() ?? "false"}
+                  defaultChecked={ticket?.hasQR ?? false}
                   disabled={!isEditing}
                 />
 
