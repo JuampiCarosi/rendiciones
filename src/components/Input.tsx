@@ -71,7 +71,10 @@ const Input = (props: InputProps) => {
             className
           )}
           type={type}
-          {...register(name, { required, valueAsNumber: type === "number", valueAsDate: type === "date" })}
+          {...register(name, {
+            required,
+            valueAsNumber: type === "number" ? true : undefined,
+          })}
           defaultValue={value}
           disabled={disabled}
           autoComplete="off"

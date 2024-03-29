@@ -9,11 +9,12 @@ import Button from "../Button";
 import ConfirmModal from "../ConfirmModal";
 import toast, { Toaster } from "react-hot-toast";
 import { Ticket } from "@prisma/client";
+import { parsePrismaJson } from "../../utils/parsePrismaJson";
 
 const ticketParamsVal = z.object({
   amount: z.number().positive(),
   description: z.string().min(1),
-  invoiceDate: z.date(),
+  invoiceDate: z.coerce.date(),
   expenseType: z.string().min(1),
   invoiceType: z.string().min(1),
   costCenter: z.string().min(1).optional(),
@@ -69,7 +70,7 @@ const EditTicketModal = memo(function EditTicketModal({
   const [selectedCostCenters, setSelectedCostCenter] = useState<string[] | null>(null);
 
   useEffect(() => {
-    if (ticket) setSelectedCostCenter(JSON.parse(ticket.costCenter));
+    if (ticket) setSelectedCostCenter(parsePrismaJson(ticket.costCenter));
   }, [ticket]);
 
   const handleShowConfirmModal = (show: boolean) => {
@@ -112,7 +113,7 @@ const EditTicketModal = memo(function EditTicketModal({
       editTicketMutation.mutate({
         amount: Number(amount),
         description,
-        invoiceDate: new Date(invoiceDate),
+        invoiceDate,
         invoiceType,
         expenseType,
         costCenter: JSON.stringify(selectedCostCenters),
@@ -122,8 +123,6 @@ const EditTicketModal = memo(function EditTicketModal({
     handleShow(false);
     setIsEditing(false);
   });
-
-  console.log(formState);
 
   const errorMessageKeys = Object.keys(formState.errors) as ErrorMessageKeys[];
   const clientErrorMessageArray = errorMessageKeys.map((key) => {

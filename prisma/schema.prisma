@@ -1,99 +1,91 @@
 generator client {
-  provider        = "prisma-client-js"
-  previewFeatures = ["referentialIntegrity"]
+  provider = "prisma-client-js"
 }
 
 datasource db {
-  provider             = "mysql"
-  url                  = env("DATABASE_URL")
-  referentialIntegrity = "prisma"
-}
-
-model Example {
-  id String @id @default(cuid())
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
 
 model Account {
   id                String  @id @default(cuid())
-  userId            String
-  type              String
-  provider          String
-  providerAccountId String
+  userId            String  @map("user_id")
+  type              String?
+  provider          String?
+  providerAccountId String? @map("provider_account_id")
   refresh_token     String?
-  access_token      String? @db.Text
-  expires_at        Int?
+  access_token      String?
+  expires_at        BigInt?
   token_type        String?
   scope             String?
-  id_token          String? @db.Text
+  id_token          String?
   session_state     String?
   user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([provider, providerAccountId])
 }
 
+model AllowedEmails {
+  id    Int    @id @default(autoincrement())
+  email String
+}
+
+model CostCenters {
+  id         BigInt  @id @default(autoincrement())
+  name       String  @unique
+  isFinished Boolean @map("is_finished")
+}
+
+model Movements {
+  id                             String   @id @default(cuid())
+  date                           DateTime @db.Timestamptz(6)
+  amount                         Int
+  description                    String
+  fromUser                       String   @map("from_user")
+  toUser                         String   @map("to_user")
+  pettyCashDate                  DateTime @map("petty_cash_date") @db.Timestamptz(6)
+  isFromBank                     Boolean  @map("is_from_bank")
+  madeBy                         String   @map("made_by")
+  User_Movements_from_userToUser User     @relation("Movements_from_userToUser", fields: [fromUser], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "public_Movements_from_user_fkey")
+  User_Movements_to_userToUser   User     @relation("Movements_to_userToUser", fields: [toUser], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "public_Movements_to_user_fkey")
+}
+
 model Session {
   id           String   @id @default(cuid())
-  sessionToken String   @unique
-  userId       String
-  expires      DateTime
-  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-}
-
-model User {
-  id            String    @id @default(cuid())
-  name          String?
-  email         String?   @unique
-  emailVerified DateTime?
-  image         String?
-  accounts      Account[]
-  sessions      Session[]
-  isAdmin       Boolean   @default(false)
-  isBanker      Boolean   @default(false)
-  isEmployee    Boolean   @default(true)
-}
-
-model VerificationToken {
-  identifier String
-  token      String   @unique
-  expires    DateTime
-
-  @@unique([identifier, token])
+  sessionToken String   @unique @map("session_token")
+  userId       String   @map("user_id")
+  expires      DateTime @db.Timestamptz(6)
+  user         User     @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "public_Session_user_id_fkey")
 }
 
 model Ticket {
   id            String   @id @default(cuid())
-  ticketId      Int
-  invoiceType   String
+  ticketId      Int      @map("ticket_id")
+  invoiceType   String   @map("invoice_type")
   description   String
-  amount        Float
-  invoiceDate   DateTime
-  costCenter    String
-  userName      String
-  expenseType   String
-  pettyCashDate DateTime
-  userId        String
-  hasQR         Boolean  @default(false)
+  amount        Int
+  invoiceDate   DateTime @map("invoice_date") @db.Timestamptz(6)
+  costCenter    Json     @map("cost_center")
+  userName      String   @map("user_name")
+  expenseType   String   @map("expense_type")
+  pettyCashDate DateTime @map("petty_cash_date") @db.Timestamptz(6)
+  userId        String   @map("user_id")
+  hasQR         Boolean  @map("hasqr")
+  User          User     @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "public_Ticket_user_id_fkey")
 }
 
-model Movements {
-  id            String   @id @default(cuid())
-  date          DateTime
-  amount        Float
-  description   String
-  fromUser      String
-  toUser        String
-  pettyCashDate DateTime
-  isFromBank    Boolean  @default(false)
-  madeBy        String
-}
-
-model CostCenters {
-  id         Int    @id @default(autoincrement())
-  name       String @db.VarChar(255)
-  isFinished Int    @default(0)
-}
-
-model AllowedEmails {
-  id    Int    @id @default(autoincrement())
-  email String @db.VarChar(255)
+model User {
+  id                                  String      @id @default(cuid())
+  name                                String?
+  email                               String?
+  image                               String?
+  isAdmin                             Boolean?    @map("is_admin")
+  isBanker                            Boolean?    @map("is_banker")
+  isEmployee                          Boolean?    @map("is_employee")
+  emailVerified                       DateTime?   @map("email_verified")
+  Account                             Account[]
+  Movements_Movements_from_userToUser Movements[] @relation("Movements_from_userToUser")
+  Movements_Movements_to_userToUser   Movements[] @relation("Movements_to_userToUser")
+  Session                             Session[]
+  Ticket                              Ticket[]
 }

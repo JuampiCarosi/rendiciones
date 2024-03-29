@@ -1,6 +1,5 @@
 // src/server/trpc/router/index.ts
 import { t } from "../trpc";
-import { exampleRouter } from "./example";
 import { authRouter } from "./auth";
 import { ticketsRouter } from "./tickets";
 import { usersRouter } from "./users";
@@ -11,7 +10,6 @@ import { inferRouterInputs, inferRouterOutputs } from "@trpc/server";
 import { adminRouter } from "./admin";
 
 export const appRouter = t.router({
-  example: exampleRouter,
   auth: authRouter,
   tickets: ticketsRouter,
   users: usersRouter,

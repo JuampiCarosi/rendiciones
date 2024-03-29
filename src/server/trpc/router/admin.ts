@@ -2,12 +2,10 @@ import { t } from "../trpc";
 import { z } from "zod";
 
 export const adminRouter = t.router({
-  getCosCenters: t.procedure.input(z.boolean().optional()).query(async ({ ctx, input: filterFinished }) => {
-    if (filterFinished !== undefined) {
+  getCosCenters: t.procedure.input(z.boolean().optional()).query(async ({ ctx, input: isFinished }) => {
+    if (isFinished !== undefined) {
       return await ctx.prisma.costCenters.findMany({
-        where: {
-          isFinished: filterFinished ? 1 : 0,
-        },
+        where: { isFinished },
       });
     }
 
@@ -32,7 +30,7 @@ export const adminRouter = t.router({
         id: costCenterId,
       },
       data: {
-        isFinished: 1,
+        isFinished: true,
       },
     });
   }),
@@ -40,7 +38,7 @@ export const adminRouter = t.router({
     return await ctx.prisma.costCenters.create({
       data: {
         name: costCenterName,
-        isFinished: 0,
+        isFinished: false,
       },
     });
   }),

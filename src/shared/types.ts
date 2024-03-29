@@ -9,6 +9,7 @@ export const ticketParamsVal = z.object({
   invoiceType: z.string().min(1),
   costCenter: z.string().min(1).optional(),
   hasQR: z.boolean().optional(),
+  currency: z.enum(["ARS", "USD", "EUR", "USDT"]).optional(),
 });
 
 export const movementsParamsVal = z.object({

@@ -1,5 +1,5 @@
 export function formatNumber(
-  value: number | string | undefined | null,
+  value: number | string | undefined | null | bigint,
   options?: { decimals?: number; emptyValues?: string }
 ) {
   const { decimals = 2, emptyValues = "-" } = options ?? {};

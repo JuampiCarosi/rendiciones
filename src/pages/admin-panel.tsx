@@ -156,7 +156,7 @@ const CostCentersModal = ({ handleShow, show }: { show: boolean; handleShow: (sh
                 </CostCenterTable.Head>
                 <CostCenterTable.Body>
                   {costCenterRows.map(({ row }) => (
-                    <CostCenterTable.Row key={row.id} row={row}>
+                    <CostCenterTable.Row key={row.id.toString()} row={row}>
                       <CostCenterTable.Cell className=" text-lg" accessor="name" align="center" />
                       <CostCenterTable.Cell accessorAlias="actions" align="center">
                         <div className="space-x-4">
@@ -168,7 +168,7 @@ const CostCentersModal = ({ handleShow, show }: { show: boolean; handleShow: (sh
                               });
 
                               if (confirm) {
-                                deleteCostCenterMutation.mutate(row.id);
+                                deleteCostCenterMutation.mutate(Number(row.id));
                               }
                             }}
                             className=" rounded-md bg-red-600 p-0.5 text-white"

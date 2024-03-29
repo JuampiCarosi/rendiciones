@@ -10,7 +10,7 @@ import toast, { Toaster } from "react-hot-toast";
 export const ticketParamsVal = z.object({
   amount: z.number().min(1),
   description: z.string().min(1),
-  invoiceDate: z.date(),
+  invoiceDate: z.coerce.date(),
   expenseType: z.string().min(1),
   invoiceType: z.string().min(1),
   hasQR: z.coerce.boolean().optional(),
@@ -80,6 +80,7 @@ const InvoiceModal = ({ handleShow, show }: Props) => {
 
   const onSubmit = handleSubmitVal((props) => {
     const { amount, description, invoiceDate, invoiceType, expenseType, hasQR } = props;
+    console.log("invoiceDate", invoiceDate);
     mutation.mutate({
       amount: Number(amount),
       description,

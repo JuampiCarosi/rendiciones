@@ -12,6 +12,7 @@ import { env } from "../../../env/client.mjs";
 import { usersRouter } from "./users";
 import { groupBy } from "../../../utils/groupby";
 import { isSameYear } from "date-fns";
+import { parsePrismaJson } from "../../../utils/parsePrismaJson";
 
 const sheetColumns = [
   { header: "ID", key: "ticketId", width: 16 },
@@ -144,8 +145,8 @@ export const balancesRouter = t.router({
     const balances: { costCenter: string; amount: number }[] = [];
 
     tickets.forEach((ticket: Ticket) => {
-      const costCenter = JSON.parse(ticket.costCenter);
-      costCenter.forEach((c: string) => {
+      const costCenter = parsePrismaJson(ticket.costCenter) as string[];
+      costCenter?.forEach((c: string) => {
         const balance = balances.find((item) => item.costCenter === c);
         if (!balance) {
           balances.push({ costCenter: c, amount: ticket.amount });
@@ -227,7 +228,7 @@ export const balancesRouter = t.router({
         report.tickets.push({
           ...ticket,
           cashOut: ticket.amount * -1,
-          costCenter: pareStringifiedArray(ticket.costCenter),
+          costCenter: parsePrismaJson(ticket.costCenter),
           cashIn: 0,
         });
       }
@@ -368,7 +369,3 @@ export const balancesRouter = t.router({
     return { report: stream.toString("base64") };
   }),
 });
-
-function pareStringifiedArray(stringifiedArray: string) {
-  return stringifiedArray.replaceAll('"', "").replaceAll("[", "").replaceAll("]", "").replaceAll(",", ", ");
-}
