@@ -87,7 +87,7 @@ const InvoiceModal = ({ handleShow, show }: Props) => {
       invoiceDate: new Date(invoiceDate),
       invoiceType,
       expenseType,
-      costCenter: JSON.stringify(selectedCostCenters),
+      costCenter: selectedCostCenters,
       hasQR: Boolean(hasQR),
     });
     handleClose();

@@ -70,7 +70,7 @@ const EditTicketModal = memo(function EditTicketModal({
   const [selectedCostCenters, setSelectedCostCenter] = useState<string[] | null>(null);
 
   useEffect(() => {
-    if (ticket) setSelectedCostCenter(parsePrismaJson(ticket.costCenter));
+    if (ticket) setSelectedCostCenter(ticket.costCenter as string[]);
   }, [ticket]);
 
   const handleShowConfirmModal = (show: boolean) => {
@@ -116,7 +116,7 @@ const EditTicketModal = memo(function EditTicketModal({
         invoiceDate,
         invoiceType,
         expenseType,
-        costCenter: JSON.stringify(selectedCostCenters),
+        costCenter: selectedCostCenters ?? undefined,
         id: ticket.id,
         hasQR: Boolean(hasQR),
       });

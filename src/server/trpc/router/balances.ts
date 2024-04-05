@@ -145,7 +145,7 @@ export const balancesRouter = t.router({
     const balances: { costCenter: string; amount: number }[] = [];
 
     tickets.forEach((ticket: Ticket) => {
-      const costCenter = parsePrismaJson(ticket.costCenter) as string[];
+      const costCenter = ticket.costCenter as string[];
       costCenter?.forEach((c: string) => {
         const balance = balances.find((item) => item.costCenter === c);
         if (!balance) {
@@ -228,7 +228,7 @@ export const balancesRouter = t.router({
         report.tickets.push({
           ...ticket,
           cashOut: ticket.amount * -1,
-          costCenter: parsePrismaJson(ticket.costCenter),
+          costCenter: ticket.costCenter,
           cashIn: 0,
         });
       }
