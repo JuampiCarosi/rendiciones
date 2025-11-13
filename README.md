@@ -36,8 +36,11 @@ We recommend deploying to [Vercel](https://vercel.com/?utm_source=t3-oss&utm_cam
 - Go to [Vercel](https://vercel.com/?utm_source=t3-oss&utm_campaign=oss) and sign up with GitHub.
 - Create a Project and import the repository you pushed your code to.
 - Add your environment variables.
+  - **Important**: See [Database Setup Guide](./docs/DATABASE_SETUP.md) for proper Supabase configuration to avoid connection errors.
 - Click **Deploy**
 - Now whenever you push a change to your repository, Vercel will automatically redeploy your website!
+
+> **Note**: If you're using Supabase with Vercel, make sure to use the connection pooler URL (port 6543) instead of the direct connection URL. See [docs/DATABASE_SETUP.md](./docs/DATABASE_SETUP.md) for details.
 
 ### Docker
 
